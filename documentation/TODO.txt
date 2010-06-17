@@ -1,0 +1,6 @@
+
+- Discover if plugins stopped provoding data and restart them if possible
+
+- Write test cases for 3rd party plugin authors
+
+ 

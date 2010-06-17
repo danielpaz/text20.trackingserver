@@ -1,0 +1,662 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE preferences SYSTEM "http://java.sun.com/dtd/preferences.dtd">
+<preferences EXTERNAL_XML_VERSION="1.0">
+  <root type="user">
+    <map/>
+    <node name="de">
+      <map></map>
+      <node name="dfki">
+        <map/>
+        <node name="eyetracker">
+          <map/>
+          <node name="filter">
+            <map/>
+            <node name="FilterChainBuilder">
+              <map/>
+              <node name="DefaultChains">
+                <map/>
+                
+                
+                
+  <!--              
+                <node name="1A-ReadDetect (no OCR)">
+                  <map/>
+                  <node name="1">
+                    <map>
+                      <entry key="ClassName" value="de.dfki.eyetracker.filter.impl.PixelCoordsFilter"/>
+                      <entry key="UniqueID" value="PixelCoordsFilter"/>
+                    </map>
+                  </node>
+                  <node name="2">
+                    <map>
+                      <entry key="ClassName" value="de.dfki.eyetracker.filter.impl.CalibrationCorrectionFilter"/>
+                    </map>
+                  </node>
+                  <node name="3">
+                    <map>
+                      <entry key="ClassName" value="de.dfki.eyetracker.filter.impl.ScreenshotFilter"/>
+                    </map>
+                  </node>
+                  <node name="4">
+                    <map>
+                      <entry key="ClassName" value="de.dfki.eyetracker.filter.impl.SerializationFilter"/>
+                      <entry key="UniqueID" value="SerializationFilter"/>
+                    </map>
+                  </node>
+                  <node name="5">
+                    <map>
+                      <entry key="ClassName" value="de.dfki.eyetracker.filter.impl.SingleCoordCombinationFilter"/>
+                      <entry key="UniqueID" value="SingleCoordCombinationFilter"/>
+                    </map>
+                    <node name="Preferences">
+                     	<map>
+                     	  <entry key="targetparam" value="gazePixelXLeftEye"/>
+                     	</map>
+                    </node>
+                  </node>
+                  <node name="6">
+                    <map>
+                      <entry key="ClassName" value="de.dfki.eyetracker.filter.impl.readingdetection.FixationDetectionFilter"/>
+                      <entry key="UniqueID" value="FixationDetectionFilter"/>
+                    </map>
+                  </node>
+                  <node name="7">
+                    <map>
+                      <entry key="ClassName" value="de.dfki.eyetracker.filter.impl.readingdetection.FeatureGenerationFilter"/>
+                      <entry key="UniqueID" value="FeatureGenerationFilter"/>
+                    </map>
+                    <node name="Preferences">
+                      <map>
+                   	    <entry key="CharHeightPixel" value="14"/>
+                  	  </map>
+                    </node>
+                  </node>
+                  <node name="8">
+                    <map>
+                      <entry key="ClassName" value="de.dfki.eyetracker.filter.impl.readingdetection.ReadingDetectionFilter"/>
+                      <entry key="UniqueID" value="ReadingDetectionFilter"/>
+                    </map>
+                  </node>
+                  <node name="9">
+                    <map>
+                      <entry key="ClassName" value="de.dfki.eyetracker.filter.impl.readingdetection.LineAveragingFilter"/>
+                      <entry key="UniqueID" value="LineAveragingFilter"/>
+                    </map>
+                  </node>
+                  <node name="10">
+                    <map>
+                      <entry key="ClassName" value="de.dfki.eyetracker.filter.impl.readingdetection.LineCombinationFilter"/>
+                    </map>
+                  </node>
+                  <node name="11">
+                    <map>
+                      <entry key="ClassName" value="de.dfki.eyetracker.filter.impl.readingdetection.ReadingMouseControlFilter"/>
+                      <entry key="UniqueID" value="ReadingMouseControlFilter"/>
+                    </map>
+                  </node>
+                  <node name="12">
+                    <map>
+                      <entry key="ClassName" value="de.dfki.eyetracker.filter.impl.readingdetection.HttpPostFilter"/>
+                      <entry key="UniqueID" value="HttpPostFilter"/>
+                    </map>
+                    <node name="Preferences">
+                      <map>
+                   	    <entry key="RecipientAddress" value="http://localhost:9998/KaukoluService/ReadingAnnotateDetails.jsp"/>
+                  	  </map>
+                    </node>
+                  </node>
+                </node>
+                
+                
+  -->              
+                
+                
+               <node name="1A-ReadLineDetection">
+                  <map/>
+                  <node name="1">
+                    <map>
+                      <entry key="ClassName" value="de.dfki.eyetracker.filter.impl.PixelCoordsFilter"/>
+                      <entry key="UniqueID" value="PixelCoordsFilter"/>
+                    </map>
+                  </node>
+                  <node name="20">
+                    <map>
+                      <entry key="ClassName" value="de.dfki.eyetracker.filter.impl.CalibrationCorrectionFilter"/>
+                    </map>
+                  </node>
+                  <node name="30">
+                    <map>
+                      <entry key="ClassName" value="de.dfki.eyetracker.filter.impl.ScreenshotFilter"/>
+                    </map>
+                  </node>
+                  <node name="40">
+                    <map>
+                      <entry key="ClassName" value="de.dfki.eyetracker.filter.impl.SerializationFilter"/>
+                      <entry key="UniqueID" value="SerializationFilter"/>
+                    </map>
+                  </node>
+                  <node name="50">
+                    <map>
+                      <entry key="ClassName" value="de.dfki.eyetracker.filter.impl.SingleCoordCombinationFilter"/>
+                    </map>
+                  </node>
+                  <node name="60">
+                    <map>
+                      <entry key="ClassName" value="de.dfki.eyetracker.filter.impl.readingdetection.FixationDetectionFilter"/>
+                    </map>
+                  </node>
+                  <node name="70">
+                    <map>
+                      <entry key="ClassName" value="de.dfki.eyetracker.filter.impl.readingdetection.FeatureGenerationFilter"/>
+                    </map>
+                    <node name="Preferences">
+                      <map>
+                        <entry key="CharHeightPixel" value="48"/>
+           	    	<entry key="LeftLongJumpChars" value="4"/>
+           	    	<entry key="LeftShortJumpChars" value="3"/>
+          	      </map>
+                    </node>
+                  </node>
+                  <node name="80">
+                    <map>
+                      <entry key="ClassName" value="de.dfki.eyetracker.filter.impl.readingdetection.ReadingDetectionFilter"/>
+                    </map>
+                    <node name="Preferences">
+                      <map>
+                        <entry key="Detection_MonotonicBehavior" value="true"/>
+                  	  </map>
+                    </node>
+                  </node>
+                  <node name="90">
+                    <map>
+                      <entry key="ClassName" value="de.dfki.eyetracker.filter.impl.readingdetection.LineAveragingFilter"/>
+                    </map>
+                  </node>
+                  <node name="100">
+                    <map>
+                      <entry key="ClassName" value="de.dfki.eyetracker.filter.impl.DecouplingFilter"/>
+                    </map>
+                  </node>
+                  <node name="110">
+                    <map>
+                      <entry key="ClassName" value="de.dfki.eyetracker.filter.impl.readingdetection.recalibration.BBoxGazeCorrectionFilter"/>
+                    </map>
+                  </node>
+                  <node name="120">
+                    <map>
+                      <entry key="ClassName" value="de.dfki.eyetracker.filter.impl.readingdetection.BBoxExtractorFilter"/>
+                    </map>
+                    <node name="Preferences">
+                      <map>
+                      	<entry key="BBoxScanMarginX" value="10"/>
+                        <entry key="BBoxScanMarginY" value="40"/>
+                      </map>
+                    </node>
+                  </node>
+                  <node name="130">
+                    <map>
+                      <entry key="ClassName" value="de.dfki.eyetracker.filter.impl.readingdetection.BBoxLineMatcherFilter"/>
+                    </map>
+                    <node name="Preferences">
+                      <map>
+                        <entry key="RecalibrateLineToBBox" value="true"/>
+                      </map>
+                    </node>
+                  </node>
+                  <node name="140">
+                    <map>
+                      <entry key="ClassName" value="de.dfki.eyetracker.filter.impl.readingdetection.FeatureListSplitFilter"/>
+                    </map>
+                    <node name="Preferences">
+                      <map>
+                        <entry key="FeatureListPath" value="de.dfki.eyetracker.filter.impl.readingdetection.LineAveragingFilter/feature_list"/>
+                      </map>
+                    </node>
+                  </node>
+                  <node name="150">
+                    <map>
+                      <entry key="ClassName" value="de.dfki.eyetracker.filter.impl.readingdetection.FeatureGenerationFilter"/>
+                    </map>
+                    <node name="Preferences">
+                      <map>
+                        <entry key="LeftShortJumpChars" value="3"/>
+                      </map>
+                    </node>
+                  </node>
+                  <node name="160">
+                    <map>
+                      <entry key="ClassName" value="de.dfki.eyetracker.filter.impl.readingdetection.ReadingDetectionFilter"/>
+                    </map>
+                  </node>
+                  <node name="170">
+                    <map>
+                      <entry key="ClassName" value="de.dfki.eyetracker.filter.impl.readingdetection.LineAveragingFilter"/>
+                    </map>
+                  </node>
+                  <node name="180">
+                    <map>
+                      <entry key="ClassName" value="de.dfki.eyetracker.filter.impl.readingdetection.LineCombinationFilter"/>
+                    </map>
+                  </node>
+                  <node name="190">
+                    <map>
+                      <entry key="ClassName" value="de.dfki.eyetracker.filter.impl.readingdetection.ReadingMouseControlFilter"/>
+                      <entry key="UniqueID" value="ReadingMouseControlFilter"/>
+                    </map>
+                  </node>
+                  <node name="200">
+                    <map>
+                      <entry key="ClassName" value="de.dfki.eyetracker.filter.impl.readingdetection.HttpPostFilter"/>
+                      <entry key="UniqueID" value="HttpPostFilter"/>
+                    </map>
+                    <node name="Preferences">
+                      <map>
+                   	    <entry key="RecipientAddress" value="http://localhost:9998/KaukoluService/ReadingAnnotateDetails.jsp"/>
+                  	  </map>
+                    </node>
+                  </node>
+                </node>         
+                
+                
+                
+                
+                <node name="9B-FixationReadingReplay">
+                  <map/>
+                  <node name="10">
+                    <map>
+                      <entry key="ClassName" value="de.dfki.eyetracker.filter.impl.DebugRawDataTrackingFilter"/>
+                    </map>
+                  </node>
+                  <node name="20">
+                    <map>
+                      <entry key="ClassName" value="de.dfki.eyetracker.filter.impl.SingleCoordCombinationFilter"/>
+                    </map>
+                  </node>
+                  <node name="30">
+                    <map>
+                      <entry key="ClassName" value="de.dfki.eyetracker.filter.impl.readingdetection.FixationDetectionFilter"/>
+                    </map>
+                  </node>
+                  <node name="35">
+                    <map>
+                      <entry key="ClassName" value="de.dfki.eyetracker.filter.impl.readingdetection.DebugFixationOutputFilter"/>
+                    </map>
+                  </node>
+                  <node name="40">
+                    <map>
+                      <entry key="ClassName" value="de.dfki.eyetracker.filter.impl.readingdetection.FeatureGenerationFilter"/>
+                    </map>
+                    <node name="Preferences">
+                      <map>
+                   	    <entry key="CharHeightPixel" value="14"/>
+                  	  </map>
+                    </node>
+                  </node>
+                  <node name="50">
+                    <map>
+                      <entry key="ClassName" value="de.dfki.eyetracker.filter.impl.readingdetection.DebugFrameOutputFilter"/>
+                    </map>
+                  </node>
+                  <node name="60">
+                    <map>
+                      <entry key="ClassName" value="de.dfki.eyetracker.filter.impl.readingdetection.ReadingDetectionFilter"/>
+                    </map>
+                  </node>
+                  <node name="70">
+                    <map>
+                      <entry key="ClassName" value="de.dfki.eyetracker.filter.impl.readingdetection.DebugReadingOutputFilter"/>
+                    </map>
+                    <node name="Preferences">
+                      <map>
+                   	    <entry key="UseDashedLinesForSkimming" value="true"/>
+                   	    <entry key="DrawFeatureLabels" value="true"/>
+                      </map>
+                    </node>
+                  </node>
+                </node>
+                
+                
+                
+                
+                <node name="1B-1ReadingDetection">
+                  <map/>
+                  <node name="10">
+                    <map>
+                      <entry key="ClassName" value="de.dfki.eyetracker.filter.impl.DebugRawDataTrackingFilter"/>
+                    </map>
+                  </node>
+                  <node name="20">
+                    <map>
+                      <entry key="ClassName" value="de.dfki.eyetracker.filter.impl.SingleCoordCombinationFilter"/>
+                    </map>
+                  </node>
+                  <node name="30">
+                    <map>
+                      <entry key="ClassName" value="de.dfki.eyetracker.filter.impl.readingdetection.FixationDetectionFilter"/>
+                    </map>
+                  </node>
+                  <node name="40">
+                    <map>
+                      <entry key="ClassName" value="de.dfki.eyetracker.filter.impl.readingdetection.FeatureGenerationFilter"/>
+                    </map>
+                    <node name="Preferences">
+                      <map>
+                   	    <entry key="CharHeightPixel" value="14"/>
+                  	  </map>
+                    </node>
+                  </node>
+                  <node name="50">
+                    <map>
+                      <entry key="ClassName" value="de.dfki.eyetracker.filter.impl.readingdetection.DebugFrameOutputFilter"/>
+                    </map>
+                  </node>
+                  <node name="60">
+                    <map>
+                      <entry key="ClassName" value="de.dfki.eyetracker.filter.impl.readingdetection.ReadingDetectionFilter"/>
+                    </map>
+                  </node>
+                  <node name="70">
+                    <map>
+                      <entry key="ClassName" value="de.dfki.eyetracker.filter.impl.readingdetection.DebugReadingOutputFilter"/>
+                    </map>
+                    <node name="Preferences">
+                      <map>
+                   	    <entry key="UseDashedLinesForSkimming" value="true"/>
+                   	    <entry key="DrawFeatureLabels" value="true"/>
+                      </map>
+                    </node>
+                  </node>
+                  <node name="80">
+                    <map>
+                      <entry key="ClassName" value="de.dfki.eyetracker.filter.impl.readingdetection.LineAveragingFilter"/>
+                    </map>
+                  </node>
+                  <node name="90">
+                    <map>
+                      <entry key="ClassName" value="de.dfki.eyetracker.filter.impl.readingdetection.DebugAveragedReadingOutputFilter"/>
+                    </map>
+                    <node name="Preferences">
+                      <map>
+                   	    <entry key="UseDashedLinesForSkimming" value="true"/>
+                   	    <entry key="DrawFeatureLabels" value="false"/>
+                      </map>
+                    </node>
+                  </node>
+                </node>
+
+                
+                
+                
+                
+                
+                <node name="1B-2ReadLineDetection">
+                  <map/>
+                  <node name="10">
+                    <map>
+                      <entry key="ClassName" value="de.dfki.eyetracker.filter.impl.SingleCoordCombinationFilter"/>
+                    </map>
+                  </node>
+                  <node name="20">
+                    <map>
+                      <entry key="ClassName" value="de.dfki.eyetracker.filter.impl.readingdetection.FixationDetectionFilter"/>
+                    </map>
+                  </node>
+                  <node name="30">
+                    <map>
+                      <entry key="ClassName" value="de.dfki.eyetracker.filter.impl.readingdetection.FeatureGenerationFilter"/>
+                    </map>
+                    <node name="Preferences">
+                      <map>
+                        <entry key="CharHeightPixel" value="48"/>
+                   	    <entry key="LeftLongJumpChars" value="4"/>
+                   	    <entry key="LeftShortJumpChars" value="3"/>
+                  	  </map>
+                    </node>
+                  </node>
+                  <node name="35">
+                    <map>
+                      <entry key="ClassName" value="de.dfki.eyetracker.filter.impl.readingdetection.DebugFrameOutputFilter"/>
+                    </map>
+                  </node>
+                  <node name="40">
+                    <map>
+                      <entry key="ClassName" value="de.dfki.eyetracker.filter.impl.readingdetection.ReadingDetectionFilter"/>
+                    </map>
+                    <node name="Preferences">
+                      <map>
+                        <entry key="Detection_MonotonicBehavior" value="true"/>
+                  	  </map>
+                    </node>
+                  </node>
+                  <node name="50">
+                    <map>
+                      <entry key="ClassName" value="de.dfki.eyetracker.filter.impl.readingdetection.LineAveragingFilter"/>
+                    </map>
+                  </node>
+                  <node name="60">
+                    <map>
+                      <entry key="ClassName" value="de.dfki.eyetracker.filter.impl.readingdetection.DebugAveragedReadingOutputFilter"/>
+                    </map>
+                    <node name="Preferences">
+                      <map>
+                   	    <entry key="UseDashedLinesForSkimming" value="false"/>
+                   	    <entry key="DrawFeatureLabels" value="false"/>
+                      </map>
+                    </node>
+                  </node>
+                  <node name="70">
+                    <map>
+                      <entry key="ClassName" value="de.dfki.eyetracker.filter.impl.DecouplingFilter"/>
+                    </map>
+                  </node>
+                  <node name="80">
+                    <map>
+                      <entry key="ClassName" value="de.dfki.eyetracker.filter.impl.readingdetection.recalibration.BBoxGazeCorrectionFilter"/>
+                    </map>
+                  </node>
+                  <node name="90">
+                    <map>
+                      <entry key="ClassName" value="de.dfki.eyetracker.filter.impl.readingdetection.BBoxExtractorFilter"/>
+                    </map>
+                    <node name="Preferences">
+                      <map>
+                      	<entry key="BBoxScanMarginX" value="10"/>
+                        <entry key="BBoxScanMarginY" value="40"/>
+                      </map>
+                    </node>
+                  </node>
+                  <node name="100">
+                    <map>
+                      <entry key="ClassName" value="de.dfki.eyetracker.filter.impl.readingdetection.BBoxLineMatcherFilter"/>
+                    </map>
+                    <node name="Preferences">
+                      <map>
+                        <entry key="RecalibrateLineToBBox" value="true"/>
+                      </map>
+                    </node>
+                  </node>
+                  <node name="110">
+                    <map>
+                      <entry key="ClassName" value="de.dfki.eyetracker.filter.impl.readingdetection.DebugBBoxDrawingFilter"/>
+                    </map>
+                    <node name="Preferences">
+                      <map>
+                   	    <entry key="UseDashedLinesForSkimming" value="false"/>
+                   	    <entry key="DrawFeatureLabels" value="false"/>
+                      </map>
+                    </node>
+                  </node>
+                  <node name="120">
+                    <map>
+                      <entry key="ClassName" value="de.dfki.eyetracker.filter.impl.readingdetection.FeatureListSplitFilter"/>
+                    </map>
+                    <node name="Preferences">
+                      <map>
+                        <entry key="FeatureListPath" value="de.dfki.eyetracker.filter.impl.readingdetection.LineAveragingFilter/feature_list"/>
+                      </map>
+                    </node>
+                  </node>
+                  <node name="130">
+                    <map>
+                      <entry key="ClassName" value="de.dfki.eyetracker.filter.impl.readingdetection.FeatureGenerationFilter"/>
+                    </map>
+                  </node>
+                  <node name="140">
+                    <map>
+                      <entry key="ClassName" value="de.dfki.eyetracker.filter.impl.readingdetection.ReadingDetectionFilter"/>
+                    </map>
+                  </node>
+                  <node name="150">
+                    <map>
+                      <entry key="ClassName" value="de.dfki.eyetracker.filter.impl.readingdetection.LineAveragingFilter"/>
+                    </map>
+                  </node>
+                  <node name="160">
+                    <map>
+                      <entry key="ClassName" value="de.dfki.eyetracker.filter.impl.readingdetection.LineCombinationFilter"/>
+                    </map>
+                  </node>
+                  <node name="170">
+                    <map>
+                      <entry key="ClassName" value="de.dfki.eyetracker.filter.impl.readingdetection.DebugCombinedReadLineFilter"/>
+                    </map>
+                    <node name="Preferences">
+                      <map>
+                   	    <entry key="UseDashedLinesForSkimming" value="false"/>
+                      </map>
+                    </node>
+                  </node>
+                </node>
+                
+                
+                
+                
+                <node name="2A-AbsoluteSerializationChain">
+                  <map/>
+                  <node name="1">
+                    <map>
+                      <entry key="ClassName" value="de.dfki.eyetracker.filter.impl.PixelCoordsFilter"/>
+                    </map>
+                  </node>
+                  <node name="2">
+                    <map>
+                      <entry key="ClassName" value="de.dfki.eyetracker.filter.impl.CalibrationCorrectionFilter"/>
+                    </map>
+                  </node>
+                  <node name="3">
+                    <map>
+                      <entry key="ClassName" value="de.dfki.eyetracker.filter.impl.ScreenshotFilter"/>
+                    </map>
+                  </node>
+                  <node name="4">
+                    <map>
+                      <entry key="ClassName" value="de.dfki.eyetracker.filter.impl.SerializationFilter"/>
+                    </map>
+                  </node>
+                </node>
+                
+                
+                
+                
+                <node name="2B-SimpleDisplayChain">
+                  <map/>
+                  <node name="1">
+                    <map>
+                      <entry key="ClassName" value="de.dfki.eyetracker.filter.impl.PixelCoordsFilter"/>
+                    </map>
+                  </node>
+                  <node name="2">
+                    <map>
+                      <entry key="ClassName" value="de.dfki.eyetracker.filter.impl.DebugDrawingFilter"/>
+                    </map>
+                  </node>
+                  <node name="3">
+                    <map>
+                      <entry key="ClassName" value="de.dfki.eyetracker.filter.impl.CalibrationCorrectionFilter"/>
+                    </map>
+                  </node>
+                  <node name="4">
+                    <map>
+                      <entry key="ClassName" value="de.dfki.eyetracker.filter.impl.DebugDrawingFilter"/>
+                    </map>
+                  </node>
+                </node>
+               
+               
+               
+                
+                <node name="3A-MouseShortcutChain">
+                  <map/>
+                  <node name="1">
+                    <map>
+                      <entry key="ClassName" value="de.dfki.eyetracker.filter.impl.PixelCoordsFilter"/>
+                      <entry key="UniqueID" value="PixelCoordsFilter"/>
+                    </map>
+                  </node>
+                  <node name="2">
+                    <map>
+                      <entry key="ClassName" value="de.dfki.eyetracker.filter.impl.CalibrationCorrectionFilter"/>
+                    </map>
+                  </node>
+                  <node name="3">
+                    <map>
+                      <entry key="ClassName" value="de.dfki.eyetracker.filter.impl.SingleCoordCombinationFilter"/>
+                      <entry key="UniqueID" value="SingleCoordCombinationFilter"/>
+                    </map>
+                    <node name="Preferences">
+                     	<map>
+                     	  <entry key="targetparam" value="gazePixelXLeftEye"/>
+                     	</map>
+                    </node>
+                  </node>
+                  <node name="4">
+                    <map>
+                      <entry key="ClassName" value="de.dfki.eyetracker.filter.impl.mouseshortcut.ViewingLocationFilter"/>
+                      <entry key="UniqueID" value="ViewingLocationFilter"/>
+                    </map>
+                  </node>
+                </node>
+                
+                
+                
+                
+                
+                
+<!--                
+                <node name="PanelTestChain">
+                  <map></map>
+                  <node name="1">
+                    <map>
+                 	<entry key="ClassName" value="de.dfki.eyetracker.filter.impl.DebugEventToStringFilter" />
+                    </map>
+                  </node>
+                </node>
+                <node name="CalibrationChain">
+                  <map/>
+                  <node name="1">
+                    <map>
+                      <entry key="ClassName" value="de.dfki.eyetracker.filter.impl.PixelCoordsFilter"/>
+                    </map>
+                  </node>
+                  <node name="2">
+                    <map>
+                      <entry key="ClassName" value="de.dfki.eyetracker.filter.impl.CalibrationDrawingFilter"/>
+                    </map>
+                  </node>
+                  <node name="3">
+                    <map>
+                      <entry key="ClassName" value="de.dfki.eyetracker.filter.impl.CalibrationRecorderFilter"/>
+                    </map>
+                  </node>
+                </node>
+-->                
+                
+                
+              </node>
+            </node>
+          </node>
+        </node>
+      </node>
+    </node>
+  </root>
+</preferences>
