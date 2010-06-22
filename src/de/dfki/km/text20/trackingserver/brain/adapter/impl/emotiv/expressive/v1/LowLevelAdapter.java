@@ -1,12 +1,12 @@
-package de.dfki.km.text20.trackingserver.brain.adapter.impl.emotiv.v1;
+package de.dfki.km.text20.trackingserver.brain.adapter.impl.emotiv.expressive.v1;
 
 import java.util.HashMap;
 
-import de.dfki.km.text20.trackingserver.brain.adapter.impl.emotiv.v1.braintracker.jna.EDK;
-import de.dfki.km.text20.trackingserver.brain.adapter.impl.emotiv.v1.braintracker.jna.types.EE_Event_t;
-import de.dfki.km.text20.trackingserver.brain.adapter.impl.emotiv.v1.braintracker.jna.types.EE_ExpressivAlgo_t;
-import de.dfki.km.text20.trackingserver.brain.adapter.impl.emotiv.v1.braintracker.jna.types.EmoEngineEventHandle;
-import de.dfki.km.text20.trackingserver.brain.adapter.impl.emotiv.v1.braintracker.jna.types.EmoStateHandle;
+import de.dfki.km.text20.trackingserver.brain.adapter.impl.emotiv.expressive.v1.braintracker.jna.EDK;
+import de.dfki.km.text20.trackingserver.brain.adapter.impl.emotiv.expressive.v1.braintracker.jna.types.EE_Event_t;
+import de.dfki.km.text20.trackingserver.brain.adapter.impl.emotiv.expressive.v1.braintracker.jna.types.EE_ExpressivAlgo_t;
+import de.dfki.km.text20.trackingserver.brain.adapter.impl.emotiv.expressive.v1.braintracker.jna.types.EmoEngineEventHandle;
+import de.dfki.km.text20.trackingserver.brain.adapter.impl.emotiv.expressive.v1.braintracker.jna.types.EmoStateHandle;
 
 public class LowLevelAdapter{
 	

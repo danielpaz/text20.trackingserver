@@ -1,4 +1,4 @@
-package de.dfki.km.text20.trackingserver.brain.adapter.impl.emotiv.v1.braintracker.jna.types;
+package de.dfki.km.text20.trackingserver.brain.adapter.impl.emotiv.expressive.v1.braintracker.jna.types;
 
 public class EE_Event_t {
 	

@@ -19,7 +19,7 @@
  * MA 02110-1301  USA
  *
  */
-package de.dfki.km.text20.trackingserver.brain.adapter.impl.emotiv.v1;
+package de.dfki.km.text20.trackingserver.brain.adapter.impl.emotiv.expressive.v1;
 
 import java.util.concurrent.BlockingQueue;
 

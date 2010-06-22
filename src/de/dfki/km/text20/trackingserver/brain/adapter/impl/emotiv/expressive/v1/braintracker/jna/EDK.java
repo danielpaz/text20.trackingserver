@@ -1,4 +1,4 @@
-package de.dfki.km.text20.trackingserver.brain.adapter.impl.emotiv.v1.braintracker.jna;
+package de.dfki.km.text20.trackingserver.brain.adapter.impl.emotiv.expressive.v1.braintracker.jna;
 
 
 import com.sun.jna.Library;
@@ -8,10 +8,10 @@ import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.LongByReference;
 import com.sun.jna.ptr.PointerByReference;
 
-import de.dfki.km.text20.trackingserver.brain.adapter.impl.emotiv.v1.braintracker.jna.types.EE_ExpressivAlgo_t;
-import de.dfki.km.text20.trackingserver.brain.adapter.impl.emotiv.v1.braintracker.jna.types.EE_SignalStrength_t;
-import de.dfki.km.text20.trackingserver.brain.adapter.impl.emotiv.v1.braintracker.jna.types.EmoEngineEventHandle;
-import de.dfki.km.text20.trackingserver.brain.adapter.impl.emotiv.v1.braintracker.jna.types.EmoStateHandle;
+import de.dfki.km.text20.trackingserver.brain.adapter.impl.emotiv.expressive.v1.braintracker.jna.types.EE_ExpressivAlgo_t;
+import de.dfki.km.text20.trackingserver.brain.adapter.impl.emotiv.expressive.v1.braintracker.jna.types.EE_SignalStrength_t;
+import de.dfki.km.text20.trackingserver.brain.adapter.impl.emotiv.expressive.v1.braintracker.jna.types.EmoEngineEventHandle;
+import de.dfki.km.text20.trackingserver.brain.adapter.impl.emotiv.expressive.v1.braintracker.jna.types.EmoStateHandle;
 
 
 public interface EDK extends Library {

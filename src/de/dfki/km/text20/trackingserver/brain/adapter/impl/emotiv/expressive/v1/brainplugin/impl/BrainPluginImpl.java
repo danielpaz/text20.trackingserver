@@ -1,4 +1,4 @@
-package de.dfki.km.text20.trackingserver.brain.adapter.impl.emotiv.v1.brainplugin.impl;
+package de.dfki.km.text20.trackingserver.brain.adapter.impl.emotiv.expressive.v1.brainplugin.impl;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -8,12 +8,12 @@ import net.xeoh.plugins.base.annotations.Timer;
 import org.json.JSONArray;
 import org.json.JSONException;
 
-import de.dfki.km.text20.trackingserver.brain.adapter.impl.emotiv.v1.brainplugin.BrainPlugin;
-import de.dfki.km.text20.trackingserver.brain.adapter.impl.emotiv.v1.braintracker.jna.EDK;
-import de.dfki.km.text20.trackingserver.brain.adapter.impl.emotiv.v1.braintracker.jna.types.EE_Event_t;
-import de.dfki.km.text20.trackingserver.brain.adapter.impl.emotiv.v1.braintracker.jna.types.EE_ExpressivAlgo_t;
-import de.dfki.km.text20.trackingserver.brain.adapter.impl.emotiv.v1.braintracker.jna.types.EmoEngineEventHandle;
-import de.dfki.km.text20.trackingserver.brain.adapter.impl.emotiv.v1.braintracker.jna.types.EmoStateHandle;
+import de.dfki.km.text20.trackingserver.brain.adapter.impl.emotiv.expressive.v1.brainplugin.BrainPlugin;
+import de.dfki.km.text20.trackingserver.brain.adapter.impl.emotiv.expressive.v1.braintracker.jna.EDK;
+import de.dfki.km.text20.trackingserver.brain.adapter.impl.emotiv.expressive.v1.braintracker.jna.types.EE_Event_t;
+import de.dfki.km.text20.trackingserver.brain.adapter.impl.emotiv.expressive.v1.braintracker.jna.types.EE_ExpressivAlgo_t;
+import de.dfki.km.text20.trackingserver.brain.adapter.impl.emotiv.expressive.v1.braintracker.jna.types.EmoEngineEventHandle;
+import de.dfki.km.text20.trackingserver.brain.adapter.impl.emotiv.expressive.v1.braintracker.jna.types.EmoStateHandle;
 
 
 public class BrainPluginImpl implements BrainPlugin {

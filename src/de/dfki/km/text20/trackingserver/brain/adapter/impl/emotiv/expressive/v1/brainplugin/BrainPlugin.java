@@ -1,4 +1,4 @@
-package de.dfki.km.text20.trackingserver.brain.adapter.impl.emotiv.v1.brainplugin;
+package de.dfki.km.text20.trackingserver.brain.adapter.impl.emotiv.expressive.v1.brainplugin;
 
 import net.xeoh.plugins.base.Plugin;
 
