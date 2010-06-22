@@ -1,0 +1,5 @@
+
+syntax: regexp
+^dependencies/edk_utils\.dll$
+syntax: regexp
+^dependencies/edk\.dll$
