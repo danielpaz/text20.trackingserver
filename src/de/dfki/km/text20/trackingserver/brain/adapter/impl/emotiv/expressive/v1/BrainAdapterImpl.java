@@ -105,6 +105,6 @@ public class BrainAdapterImpl implements BrainAdapter {
      */
     @Capabilities
     public String[] getCapabilities() {
-        return new String[] { "brainadapter:emotiv" };
+        return new String[] { "brainadapter:emotiv:expressive" };
     }
 }

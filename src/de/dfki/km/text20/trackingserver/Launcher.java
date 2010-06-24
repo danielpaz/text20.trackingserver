@@ -63,7 +63,7 @@ public class Launcher {
         props.setProperty(PluginManager.class, "logging.level", "INFO");
 
         final PluginManager pluginManager = PluginManagerFactory.createPluginManager(props);
-        pluginManager.addPluginsFrom(new URI("classpath://*"));
         pluginManager.addPluginsFrom(new File("plugins/").toURI());
+        pluginManager.addPluginsFrom(new URI("classpath://*"));
     }
 }
