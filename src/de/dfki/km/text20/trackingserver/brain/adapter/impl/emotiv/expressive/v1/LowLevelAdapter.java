@@ -31,6 +31,7 @@ public class LowLevelAdapter{
 		
 		edk = EDK.INSTANCE;		
 		
+		// FIXME: #3
 		// connecting to the EmoComposer (Simulator)
 		//int connectionStatus = edk.EE_EngineRemoteConnect("127.0.0.1", (short)1726);
 		// connecting to the EmoEngine (Brain tracker)
