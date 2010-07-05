@@ -64,7 +64,9 @@ public class Launcher {
         props.setProperty(PluginManager.class, "cache.enabled", "true");
         props.setProperty(PluginManager.class, "cache.mode",    "weak"); //optional
         
+        
         final PluginManager pluginManager = PluginManagerFactory.createPluginManager(props);
+        
         pluginManager.addPluginsFrom(new File("plugins/").toURI());
         pluginManager.addPluginsFrom(new URI("classpath://*"));
     }

@@ -11,6 +11,7 @@ import de.dfki.km.text20.trackingserver.brain.adapter.impl.emotiv.expressive.v1.
 import de.dfki.km.text20.trackingserver.brain.adapter.impl.emotiv.expressive.v1.braintracker.jna.types.EmoEngineEventHandle;
 import de.dfki.km.text20.trackingserver.brain.adapter.impl.emotiv.expressive.v1.braintracker.jna.types.EmoStateHandle;
 
+
 public class LowLevelAdapter {
 
     /** Indicates whether the brain tracker is connected */
@@ -31,11 +32,15 @@ public class LowLevelAdapter {
     /** State of the brain tracker */
     protected int state;
 
+    /**
+     * @param pluginManager
+     */
     public LowLevelAdapter(final PluginManager pluginManager) {
         this.rawConfiguration = pluginManager.getPlugin(PluginConfiguration.class);
     }
 
     /** Connects to the brain tracker */
+    @SuppressWarnings("boxing")
     public void connectToEngine() {
 
         this.edk = EDK.INSTANCE;
@@ -45,9 +50,11 @@ public class LowLevelAdapter {
 
         int connectionStatus = -1;
 
+       
         if ("device".equals(connectorType)) {
             connectionStatus = this.edk.EE_EngineConnect();
         }
+        
         if ("composer".equals(connectorType)) {
             final String simulatorServer = pcu.getString(LowLevelAdapter.class, "simulator.server", "127.0.0.1");
             final short simulatorPort = (short) pcu.getInt(LowLevelAdapter.class, "simulator.port", 1726);
