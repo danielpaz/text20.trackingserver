@@ -23,9 +23,11 @@ package de.dfki.km.text20.trackingserver.brain.adapter.impl.emotiv.expressive.v1
 
 import java.util.concurrent.BlockingQueue;
 
+import net.xeoh.plugins.base.PluginManager;
 import net.xeoh.plugins.base.annotations.Capabilities;
 import net.xeoh.plugins.base.annotations.PluginImplementation;
 import net.xeoh.plugins.base.annotations.Timer;
+import net.xeoh.plugins.base.annotations.injections.InjectPlugin;
 import de.dfki.km.text20.trackingserver.brain.adapter.BrainAdapter;
 import de.dfki.km.text20.trackingserver.brain.remote.TrackingDeviceInformation;
 import de.dfki.km.text20.trackingserver.brain.remote.TrackingEvent;
@@ -41,13 +43,16 @@ public class BrainAdapterImpl implements BrainAdapter {
 	
 	BlockingQueue<TrackingEvent> eventQueue;
 
+	@InjectPlugin
+	public PluginManager pluginManager;
+	
     /* (non-Javadoc)
      * @see de.dfki.km.text20.trackingserver.brain.adapter.BrainAdapter#start()
      */
     @Override
     public void start() {
-    	lowLevelAdapter= new LowLevelAdapter();
-        lowLevelAdapter.connectToEngine();  
+    	lowLevelAdapter = new LowLevelAdapter(pluginManager);
+        lowLevelAdapter.connectToEngine();
     }
 
     /* (non-Javadoc)
