@@ -1,0 +1,5 @@
+
+- com4j leaks memory? Every second the size of the process grows by 200-500k
+    (appears to have to do with 'com4j.StandardComMethod' ?) 
+
+ 

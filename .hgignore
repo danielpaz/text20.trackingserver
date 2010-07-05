@@ -1,0 +1,9 @@
+
+syntax: regexp
+^dependencies/edk_utils\.dll$
+syntax: regexp
+^dependencies/edk\.dll$
+syntax: regexp
+^ant\.build$
+syntax: regexp
+^dist$
