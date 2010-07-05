@@ -12,6 +12,10 @@ import de.dfki.km.text20.trackingserver.brain.adapter.impl.emotiv.expressive.v1.
 import de.dfki.km.text20.trackingserver.brain.adapter.impl.emotiv.expressive.v1.braintracker.jna.types.EmoStateHandle;
 
 
+/**
+ * @author rb
+ *
+ */
 public class LowLevelAdapter {
 
     /** Indicates whether the brain tracker is connected */
