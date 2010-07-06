@@ -1,0 +1,121 @@
+<?xml version="1.0"?>
+
+<!-- General project description -->
+<project name="ATServer" default="all">
+
+	<!-- Define different global variables -->
+	<property name="prefix" value="trackingserver" />
+	<property name="version" value="0.1.0" />
+
+	<!-- Define different roots -->
+	<property name="build.root" value="ant.build/" />
+	<property name="distribution.root" value="dist/" />
+
+
+	<!-- Clear everything up -->
+	<target name="clean" description="Remove all previous build files">
+		<delete dir="${build.root}" />
+		<delete dir="${distribution.root}" />
+	</target>
+
+
+	<!-- Build and pack target -->
+	<target name="server" depends="clean, compile, pack" />
+
+
+	<!-- Compile the plugin -->
+	<target name="compile" description="Compile the framework">
+		<!-- Create output folder -->
+		<mkdir dir="${build.root}/${prefix}/" />
+
+
+		<!-- Compile all classes -->
+		<javac srcdir="src" destdir="${build.root}/${prefix}/" source="1.6" target="1.6" debug="true">
+			<classpath>
+				<fileset dir="dependencies/">
+					<include name="*.jar" />
+				</fileset>
+			</classpath>
+		</javac>
+	</target>
+
+
+	<!-- Pack the plugin -->
+	<target name="pack" description="Pack the core plugin with its dependencies">
+		<!-- Create output folder -->
+		<mkdir dir="${distribution.root}/" />
+		<mkdir dir="${distribution.root}/plugins" />
+		
+		<!-- Unjar related -->
+		<unjar dest="${build.root}/${prefix}/">
+			<fileset dir=".">
+				<include name="dependencies/*.jar" />
+			</fileset>
+		</unjar>
+
+		<!-- Rejar everything -->
+		<jar destfile="${distribution.root}/${prefix}-${version}.jar" basedir="${build.root}/${prefix}/">
+    		<manifest>
+    			  <attribute name="Main-Class" value="de.dfki.km.text20.trackingserver.Launcher"/>
+    		</manifest>
+		</jar>
+		
+		<jar destfile="${distribution.root}/${prefix}-remoteapi-${version}.jar" basedir="${build.root}/${prefix}/">
+            <include name="de/dfki/km/text20/trackingserver/common/remote/*" />
+            <include name="de/dfki/km/text20/trackingserver/eyes/remote/*" />
+            <include name="de/dfki/km/text20/trackingserver/eyes/remote/options/**/*" />
+            <include name="de/dfki/km/text20/trackingserver/brain/remote/*" />
+            <include name="de/dfki/km/text20/trackingserver/brain/remote/options/**/*" />
+		</jar>
+		
+		<copy tofile="dist/com4j.dll" file="dependencies/com4j.dll"/>
+		<copy failonerror="false" tofile="dist/edk_utils.dll" file="dependencies/edk_utils.dll"/>
+		<copy failonerror="false" tofile="dist/edk.dll" file="dependencies/edk.dll"/>
+		<copy failonerror="false" tofile="dist/edk.lib" file="dependencies/edk.lib"/>
+		<copy tofile="dist/trackingserver.exe" file="dependencies/launch4j/trackingserver.exe"/>
+		<copy tofile="dist/config.properties" file="config.properties"/>	
+	</target>
+
+
+	<!-- Create the API documentation -->
+	<target name="_documentation">
+		<javadoc destdir="documentation/api/" author="true" version="true" use="true" windowtitle="Augmented Text Server API">
+
+			<packageset dir="src/" defaultexcludes="yes">
+				<include name="de/dfki/km/text20/trackingserver/*" />
+			</packageset>
+
+			<doctitle>MyTitle</doctitle>
+
+			<link href="http://developer.java.sun.com/developer/products/xml/docs/api/" />
+		</javadoc>
+	</target>
+
+
+
+	<!-- Prepare distributables -->
+	<target name="preparepublish" description="Eventually generates distributable files" depends="server">
+
+		<!-- Zip binary -->
+		<zip destfile="${distribution.root}/${prefix}-${version}.bin.zip">
+			<fileset dir=".">
+				<include name="documentation/**/*" />
+				<include name="${distribution.root}/*.jar" />
+				<include name="${distribution.root}/*.exe" />
+				<include name="${distribution.root}/*.dll" />
+				<include name="${distribution.root}/*.properties" />
+			</fileset>
+		</zip>
+
+		<!-- Zip sources -->
+		<zip destfile="${distribution.root}/${prefix}-${version}.src.zip">
+			<fileset dir=".">
+				<include name="**/*" />
+			</fileset>
+		</zip>
+	</target>
+
+	<!-- All together -->
+	<target name="all" depends="server, preparepublish" />
+
+</project>

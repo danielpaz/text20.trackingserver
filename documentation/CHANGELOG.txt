@@ -1,0 +1,13 @@
+ 
+
+0.2.0 
+-----------------
+- Should broadcast most of the data deliverd by Tobii Devices.
+- Also sends a device info
+- Changed internal API, so that tracking plugins are supported
+- Fixed tricky com4j bug: memleaks should be fixed now as well as stalling threads.
+
+
+0.1.0 (28.1.2009)
+-----------------
+- Initial version
