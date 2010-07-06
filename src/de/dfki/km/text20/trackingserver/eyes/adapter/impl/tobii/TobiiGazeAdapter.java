@@ -91,6 +91,7 @@ public class TobiiGazeAdapter implements GazeAdapter {
      * .dfki.km.text20.trackingserver.adapter.AdapterCommand,
      * de.dfki.km.text20.trackingserver.adapter.options.AdapterCommandOption[])
      */
+    @Override
     public void adapterCommand(final AdapterCommand command,
                                final AdapterCommandOption... options) {
         switch (command) {
@@ -119,6 +120,7 @@ public class TobiiGazeAdapter implements GazeAdapter {
      * @seede.dfki.km.augmentedtext.trackingserver.adapter.GazeAdapter#
      * getDeviceInformation()
      */
+    @Override
     public TrackingDeviceInformation getDeviceInformation() {
         return this.trackingDeviceInfo;
     }
@@ -130,6 +132,7 @@ public class TobiiGazeAdapter implements GazeAdapter {
      * de.dfki.km.augmentedtext.trackingserver.adapter.GazeAdapter#setup(java
      * .util.concurrent.BlockingQueue)
      */
+    @Override
     @SuppressWarnings("boxing")
     public void setup(final BlockingQueue<TrackingEvent> eventQueue) {
         try {
@@ -181,6 +184,7 @@ public class TobiiGazeAdapter implements GazeAdapter {
      * 
      * @see de.dfki.km.augmentedtext.trackingserver.adapter.GazeAdapter#start()
      */
+    @Override
     public void start() {
         TobiiGazeAdapter.this.logger.info("Starting tracking ...");
 
@@ -196,6 +200,7 @@ public class TobiiGazeAdapter implements GazeAdapter {
      * 
      * @see de.dfki.km.augmentedtext.trackingserver.adapter.GazeAdapter#stop()
      */
+    @Override
     public void stop() {
         TobiiGazeAdapter.this.logger.info("Stopping tracking ...");
         try {

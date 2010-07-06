@@ -18,7 +18,7 @@ import de.dfki.km.text20.trackingserver.eyes.adapter.GazeAdapter;
 import de.dfki.km.text20.trackingserver.eyes.adapter.options.AdapterCommandOption;
 import de.dfki.km.text20.trackingserver.eyes.remote.TrackingDeviceInformation;
 import de.dfki.km.text20.trackingserver.eyes.remote.TrackingEvent;
- 
+
 /**
  * Simulates events
  * 
@@ -53,11 +53,12 @@ public class SimulatingGazeAdapter implements GazeAdapter {
      * de.dfki.km.augmentedtext.trackingserver.adapter.GazeAdapter#setup(java
      * .util.concurrent.BlockingQueue)
      */
+    @Override
     public void setup(BlockingQueue<TrackingEvent> eventQueue) {
         this.trackingDeviceInfo = new TrackingDeviceInformation();
-        this.trackingDeviceInfo.deviceName = "Simulator";       
-        this.trackingDeviceInfo.hardwareID = "simulator/v0";       
-        this.trackingDeviceInfo.trackingDeviceManufacturer = "Text 2.0 Project";       
+        this.trackingDeviceInfo.deviceName = "Simulator";
+        this.trackingDeviceInfo.hardwareID = "simulator/v0";
+        this.trackingDeviceInfo.trackingDeviceManufacturer = "Text 2.0 Project";
 
         this.queue = eventQueue;
     }
@@ -67,6 +68,7 @@ public class SimulatingGazeAdapter implements GazeAdapter {
      * 
      * @see de.dfki.km.augmentedtext.trackingserver.adapter.GazeAdapter#start()
      */
+    @Override
     @SuppressWarnings("boxing")
     public void start() {
         SimulatingGazeAdapter.this.logger.info("Starting tracking.");
@@ -82,7 +84,6 @@ public class SimulatingGazeAdapter implements GazeAdapter {
             final int xnoise = pcu.getInt(SimulatingGazeAdapter.class, "device.inaccuracy.x", 5);
             final int ynoise = pcu.getInt(SimulatingGazeAdapter.class, "device.inaccuracy.y", 5);
 
-            
             int currentDuration = this.baseValue;
 
             int sleepValue = 10;
@@ -109,7 +110,7 @@ public class SimulatingGazeAdapter implements GazeAdapter {
                     }
 
                     // Generate noisy point
-                    Point toSend = new Point(this.current.x + (SimulatingGazeAdapter.this.r.nextInt(2*xnoise) - xnoise), this.current.y + (SimulatingGazeAdapter.this.r.nextInt(2*ynoise) - ynoise));
+                    Point toSend = new Point(this.current.x + (SimulatingGazeAdapter.this.r.nextInt(2 * xnoise) - xnoise), this.current.y + (SimulatingGazeAdapter.this.r.nextInt(2 * ynoise) - ynoise));
 
                     // Generate tracking event
                     final TrackingEvent trackingEvent = new TrackingEvent();
@@ -144,7 +145,6 @@ public class SimulatingGazeAdapter implements GazeAdapter {
                     try {
                         Thread.sleep(this.sleepValue);
                     } catch (InterruptedException e) {
-                        // TODO Auto-generated catch block
                         e.printStackTrace();
                     }
                 }
@@ -157,6 +157,7 @@ public class SimulatingGazeAdapter implements GazeAdapter {
      * 
      * @see de.dfki.km.augmentedtext.trackingserver.adapter.GazeAdapter#stop()
      */
+    @Override
     public void stop() {
         // TODO
     }
@@ -167,6 +168,7 @@ public class SimulatingGazeAdapter implements GazeAdapter {
      * @seede.dfki.km.augmentedtext.trackingserver.adapter.GazeAdapter#
      * getDeviceInformation()
      */
+    @Override
     public TrackingDeviceInformation getDeviceInformation() {
         return this.trackingDeviceInfo;
     }
@@ -182,6 +184,7 @@ public class SimulatingGazeAdapter implements GazeAdapter {
     /* (non-Javadoc)
      * @see de.dfki.km.text20.trackingserver.adapter.GazeAdapter#adapterCommand(de.dfki.km.text20.trackingserver.adapter.AdapterCommand, de.dfki.km.text20.trackingserver.adapter.options.AdapterCommandOption[])
      */
+    @Override
     public void adapterCommand(AdapterCommand command, AdapterCommandOption... options) {
         //
     }

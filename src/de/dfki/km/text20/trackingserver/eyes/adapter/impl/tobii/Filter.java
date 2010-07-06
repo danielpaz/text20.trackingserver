@@ -26,6 +26,7 @@ class Filter extends AbstractEventFilter {
         this.m_tobiiGazeAdapter = tobiiGazeAdapter;
     }
 
+    @Override
     @SuppressWarnings("boxing")
     public void processTrackingEvent(final Event e) {
 

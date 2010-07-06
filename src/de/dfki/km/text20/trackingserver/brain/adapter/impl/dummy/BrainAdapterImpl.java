@@ -39,7 +39,7 @@ import de.dfki.km.text20.trackingserver.brain.remote.TrackingEvent;
 public class BrainAdapterImpl implements BrainAdapter {
 
     /** */
-     BlockingQueue<TrackingEvent> eventQueue;
+    BlockingQueue<TrackingEvent> eventQueue;
 
     /**  */
     @Init
@@ -52,37 +52,37 @@ public class BrainAdapterImpl implements BrainAdapter {
      */
     @Override
     public void start() {
+        /**
+         * To be implemented, yet!
+         */
     }
-    
+
     /**
-	 * Retrieves the events from the brain tracker
-	 */
-	@Timer(period=50)
-	public void pollChannels(){
-		TrackingEvent t = new TrackingEvent();
-		t.channels.put("channel:furrow", 0.3);
-		t.channels.put("channel:smile", 0.1);
-		t.channels.put("channel:laugh", 0.0);
-		t.channels.put("channel:instExcitement", 0.5);
-		t.channels.put("channel:engagement", 0.6);
-		try {
-		    if(eventQueue == null) return;
-			eventQueue.put(t);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+     * Retrieves the events from the brain tracker
+     */
+    @Timer(period = 50)
+    public void pollChannels() {
+        TrackingEvent t = new TrackingEvent();
+        t.channels.put("channel:furrow", new Double(0.3));
+        t.channels.put("channel:smile", new Double(0.1));
+        t.channels.put("channel:laugh", new Double(0.0));
+        t.channels.put("channel:instExcitement", new Double(0.5));
+        t.channels.put("channel:engagement", new Double(0.6));
+        try {
+            if (this.eventQueue == null) return;
+            this.eventQueue.put(t);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
 
     @Override
     public void stop() {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public TrackingDeviceInformation getDeviceInformation() {
-        // TODO Auto-generated method stub
         return new TrackingDeviceInformation();
     }
 
@@ -90,7 +90,7 @@ public class BrainAdapterImpl implements BrainAdapter {
     public void setup(BlockingQueue<TrackingEvent> eventQueue) {
         this.eventQueue = eventQueue;
     }
-    
+
     /**
      * @return .
      */

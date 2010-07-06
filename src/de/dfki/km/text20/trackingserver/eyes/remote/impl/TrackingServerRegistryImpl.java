@@ -47,19 +47,16 @@ import de.dfki.km.text20.trackingserver.eyes.remote.options.sendcommand.OptionRe
  * @author rb
  */
 @PluginImplementation
-public class TrackingServerRegistryImpl 
-extends
-CommonServerRegistry<TrackingEvent, TrackingClientCallback, TrackingDeviceInformation, GazeAdapter>  implements TrackingServerRegistry {
+public class TrackingServerRegistryImpl extends CommonServerRegistry<TrackingEvent, TrackingClientCallback, TrackingDeviceInformation, GazeAdapter>
+        implements TrackingServerRegistry {
 
     /** */
     ReferenceBasedDisplacementFilter displacementFilter = new ReferenceBasedDisplacementFilter();
-
 
     /** */
     @Override
     @Thread(isDaemonic = false)
     public void senderThread() {
-
         int numMisdetected = 0;
 
         while (true) {
@@ -117,16 +114,15 @@ CommonServerRegistry<TrackingEvent, TrackingClientCallback, TrackingDeviceInform
             latestEvent._centerY = latestEvent.centerGaze.y;
         }
 
-        // TODO: make a copy, don't return the same object.
+        // TODO: Make a copy, don't return the same object.
         return latestEvent;
     }
 
-    
-  
     /**
      * @param command
      * @param options
      */
+    @Override
     @SuppressWarnings("boxing")
     public void sendCommand(TrackingCommand command, SendCommandOption... options) {
         if (this.usedAdpater == null) return;
@@ -135,47 +131,44 @@ CommonServerRegistry<TrackingEvent, TrackingClientCallback, TrackingDeviceInform
         final OptionUtils<SendCommandOption> ou = new OptionUtils<SendCommandOption>(options);
 
         switch (command) {
-        case START:
-            this.usedAdpater.start();
-            break;
-        case STOP:
-            this.usedAdpater.stop();
-            break;
-        case ONLINE_RECALIBRATION:
-            this.logger.info("Performing an internal recalibration");
-            if (!ou.contains(OptionRecalibrationPattern.class)) break;
-
-            final OptionRecalibrationPattern rcp = ou.get(OptionRecalibrationPattern.class);
-            final List<Object[]> points = rcp.getPoints();
-
-            this.displacementFilter.clearReferencePoints();
-
-            for (Object[] objects : points) {
-                if (objects.length != 4) continue;
-
-                final Point point = (Point) objects[0];
-                final Integer dx = (Integer) objects[1];
-                final Integer dy = (Integer) objects[2];
-                final Long time = (Long) objects[3];
-
-                this.logger.fine(point + " -> " + dx + ", " + dy);
-                this.displacementFilter.updateReferencePoint(point, dx, dy, time);
-            }
-
-            break;
-        case DROP_RECALIBRATION:
-            this.logger.info("Dropping old recalibration info");
-            this.displacementFilter.clearReferencePoints();
-            break;
-
-        case HARDWARE_CALIBRATION:
-            this.logger.info("Performing a harware calibration");
-            this.usedAdpater.adapterCommand(AdapterCommand.CALIBRATE, new OptionCalibratorNumPoints(5));
-            break;
-
+            case START:
+                this.usedAdpater.start();
+                break;
+            case STOP:
+                this.usedAdpater.stop();
+                break;
+            case ONLINE_RECALIBRATION:
+                this.logger.info("Performing an internal recalibration");
+                if (!ou.contains(OptionRecalibrationPattern.class)) break;
+    
+                final OptionRecalibrationPattern rcp = ou.get(OptionRecalibrationPattern.class);
+                final List<Object[]> points = rcp.getPoints();
+    
+                this.displacementFilter.clearReferencePoints();
+    
+                for (Object[] objects : points) {
+                    if (objects.length != 4) continue;
+    
+                    final Point point = (Point) objects[0];
+                    final Integer dx = (Integer) objects[1];
+                    final Integer dy = (Integer) objects[2];
+                    final Long time = (Long) objects[3];
+    
+                    this.logger.fine(point + " -> " + dx + ", " + dy);
+                    this.displacementFilter.updateReferencePoint(point, dx, dy, time);
+                }
+                break;
+            case DROP_RECALIBRATION:
+                this.logger.info("Dropping old recalibration info");
+                this.displacementFilter.clearReferencePoints();
+                break;
+            case HARDWARE_CALIBRATION:
+                this.logger.info("Performing a harware calibration");
+                this.usedAdpater.adapterCommand(AdapterCommand.CALIBRATE, new OptionCalibratorNumPoints(5));
+                break;
         }
     }
-    
+
     /**
      * @return .
      */

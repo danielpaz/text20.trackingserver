@@ -46,10 +46,8 @@ public class Launcher {
      * @throws UnknownHostException
      * @throws URISyntaxException
      */
-    public static void main(String[] args) throws MalformedURLException,
-                                          UnknownHostException, URISyntaxException {
+    public static void main(String[] args) throws MalformedURLException, UnknownHostException, URISyntaxException {
 
-        
         final JSPFProperties props = new JSPFProperties();
 
         try {
@@ -59,14 +57,13 @@ public class Launcher {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        
+
         props.setProperty(PluginManager.class, "logging.level", "INFO");
         props.setProperty(PluginManager.class, "cache.enabled", "true");
-        props.setProperty(PluginManager.class, "cache.mode",    "weak"); //optional
-        
-        
+        props.setProperty(PluginManager.class, "cache.mode", "weak"); //optional
+
         final PluginManager pluginManager = PluginManagerFactory.createPluginManager(props);
-        
+
         pluginManager.addPluginsFrom(new File("plugins/").toURI());
         pluginManager.addPluginsFrom(new URI("classpath://*"));
     }

@@ -46,6 +46,7 @@ public class DummyGazeAdapter implements GazeAdapter {
      * de.dfki.km.augmentedtext.trackingserver.adapter.GazeAdapter#setup(java
      * .util.concurrent.BlockingQueue)
      */
+    @Override
     public void setup(BlockingQueue<TrackingEvent> eventQueue) {
         this.trackingDeviceInfo = new TrackingDeviceInformation();
         this.queue = eventQueue;
@@ -56,6 +57,7 @@ public class DummyGazeAdapter implements GazeAdapter {
      * 
      * @see de.dfki.km.augmentedtext.trackingserver.adapter.GazeAdapter#start()
      */
+    @Override
     public void start() {
         DummyGazeAdapter.this.logger.info("Starting tracking.");
 
@@ -89,7 +91,6 @@ public class DummyGazeAdapter implements GazeAdapter {
                     try {
                         Thread.sleep(15);
                     } catch (InterruptedException e) {
-                        // TODO Auto-generated catch block
                         e.printStackTrace();
                     }
                 }
@@ -102,8 +103,9 @@ public class DummyGazeAdapter implements GazeAdapter {
      * 
      * @see de.dfki.km.augmentedtext.trackingserver.adapter.GazeAdapter#stop()
      */
+    @Override
     public void stop() {
-        // TODO
+        // TODO Auto-generated catch block
     }
 
     /*
@@ -112,6 +114,7 @@ public class DummyGazeAdapter implements GazeAdapter {
      * @seede.dfki.km.augmentedtext.trackingserver.adapter.GazeAdapter#
      * getDeviceInformation()
      */
+    @Override
     public TrackingDeviceInformation getDeviceInformation() {
         return this.trackingDeviceInfo;
     }
@@ -127,6 +130,7 @@ public class DummyGazeAdapter implements GazeAdapter {
     /* (non-Javadoc)
      * @see de.dfki.km.text20.trackingserver.adapter.GazeAdapter#adapterCommand(de.dfki.km.text20.trackingserver.adapter.AdapterCommand, de.dfki.km.text20.trackingserver.adapter.options.AdapterCommandOption[])
      */
+    @Override
     public void adapterCommand(AdapterCommand command, AdapterCommandOption... options) {
         //
     }

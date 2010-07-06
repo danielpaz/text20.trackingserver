@@ -123,14 +123,15 @@ public class CommonServerRegistry<T extends CommonTrackingEvent, C extends Commo
      * #addTrackingListener
      * (de.dfki.km.augmentedtext.trackingserver.remote.TrackingClientCallback)
      */
+    @Override
     public void addTrackingListener(final C callback) {
         final BlockingQueue<T> queue = new LinkedBlockingQueue<T>(10);
         final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
         executorService.execute(new Runnable() {
 
+            @Override
             public void run() {
-
                 // Pump data
                 while (true) {
                     try {
@@ -162,7 +163,7 @@ public class CommonServerRegistry<T extends CommonTrackingEvent, C extends Commo
 
         // Obtain capabilities
         final Collection<String> info = this.information.getInformation(Information.CAPABILITIES, adapter);
-        
+
         // Check if this is the requested adapter
         if (info.contains(this.adapterID)) {
             setupAdapter(adapter);
@@ -200,7 +201,7 @@ public class CommonServerRegistry<T extends CommonTrackingEvent, C extends Commo
                     this.callbacksLock.unlock();
                 }
             } catch (InterruptedException e) {
-                System.out.println("Error waiting for some result ...");
+                this.logger.warning("Error waiting for some result...");
             }
         }
     }
@@ -212,6 +213,7 @@ public class CommonServerRegistry<T extends CommonTrackingEvent, C extends Commo
      * de.dfki.km.augmentedtext.trackingserver.remote.TrackingServerRegistry
      * #getTrackingDeviceInformation()
      */
+    @Override
     public I getTrackingDeviceInformation() {
         if (this.usedAdpater == null) return null;
 

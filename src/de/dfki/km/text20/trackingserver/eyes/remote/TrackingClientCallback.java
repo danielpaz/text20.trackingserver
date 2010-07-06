@@ -33,5 +33,6 @@ public interface TrackingClientCallback extends CommonClientCallback<TrackingEve
      * 
      * @param event
      */
+    @Override
     public void newTrackingEvent(TrackingEvent event);
 }
