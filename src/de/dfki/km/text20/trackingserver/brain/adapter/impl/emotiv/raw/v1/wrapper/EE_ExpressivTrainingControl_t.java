@@ -17,12 +17,12 @@ public final class EE_ExpressivTrainingControl_t {
     public final static EE_ExpressivTrainingControl_t EXP_RESET = new EE_ExpressivTrainingControl_t("EXP_RESET");
 
     public final int swigValue() {
-        return swigValue;
+        return this.swigValue;
     }
 
     @Override
     public String toString() {
-        return swigName;
+        return this.swigName;
     }
 
     public static EE_ExpressivTrainingControl_t swigToEnum(int swigValue) {

@@ -12,11 +12,11 @@ public class SWIGTYPE_p_unsigned_int {
   private long swigCPtr;
 
   protected SWIGTYPE_p_unsigned_int(long cPtr, boolean futureUse) {
-    swigCPtr = cPtr;
+    this.swigCPtr = cPtr;
   }
 
   protected SWIGTYPE_p_unsigned_int() {
-    swigCPtr = 0;
+    this.swigCPtr = 0;
   }
 
   protected static long getCPtr(SWIGTYPE_p_unsigned_int obj) {

@@ -36,12 +36,12 @@ public final class EE_DataChannel_t {
   public final static EE_DataChannel_t ED_SYNC_SIGNAL = new EE_DataChannel_t("ED_SYNC_SIGNAL");
 
   public final int swigValue() {
-    return swigValue;
+    return this.swigValue;
   }
 
   @Override
   public String toString() {
-    return swigName;
+    return this.swigName;
   }
 
   public static EE_DataChannel_t swigToEnum(int swigValue) {

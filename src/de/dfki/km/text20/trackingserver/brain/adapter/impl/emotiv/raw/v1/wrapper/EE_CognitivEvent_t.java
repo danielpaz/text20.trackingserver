@@ -21,12 +21,12 @@ public final class EE_CognitivEvent_t {
   public final static EE_CognitivEvent_t EE_CognitivSignatureUpdated = new EE_CognitivEvent_t("EE_CognitivSignatureUpdated");
 
   public final int swigValue() {
-    return swigValue;
+    return this.swigValue;
   }
   
   @Override
   public String toString() {
-    return swigName;
+    return this.swigName;
   }
 
   public static EE_CognitivEvent_t swigToEnum(int swigValue) {

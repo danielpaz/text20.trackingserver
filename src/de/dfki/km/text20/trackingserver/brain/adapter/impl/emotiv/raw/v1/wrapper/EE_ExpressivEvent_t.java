@@ -19,12 +19,12 @@ public final class EE_ExpressivEvent_t {
   public final static EE_ExpressivEvent_t EE_ExpressivTrainingReset = new EE_ExpressivEvent_t("EE_ExpressivTrainingReset");
 
   public final int swigValue() {
-    return swigValue;
+    return this.swigValue;
   }
 
   @Override
   public String toString() {
-    return swigName;
+    return this.swigName;
   }
 
   public static EE_ExpressivEvent_t swigToEnum(int swigValue) {

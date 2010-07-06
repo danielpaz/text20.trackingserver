@@ -17,12 +17,12 @@ public final class EE_CognitivTrainingControl_t {
   public final static EE_CognitivTrainingControl_t COG_RESET = new EE_CognitivTrainingControl_t("COG_RESET");
 
   public final int swigValue() {
-    return swigValue;
+    return this.swigValue;
   }
 
   @Override
   public String toString() {
-    return swigName;
+    return this.swigName;
   }
 
   public static EE_CognitivTrainingControl_t swigToEnum(int swigValue) {

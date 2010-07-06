@@ -12,11 +12,11 @@ public class SWIGTYPE_p_EE_CognitivAction_t {
   private long swigCPtr;
 
   protected SWIGTYPE_p_EE_CognitivAction_t(long cPtr, boolean futureUse) {
-    swigCPtr = cPtr;
+    this.swigCPtr = cPtr;
   }
 
   protected SWIGTYPE_p_EE_CognitivAction_t() {
-    swigCPtr = 0;
+    this.swigCPtr = 0;
   }
 
   protected static long getCPtr(SWIGTYPE_p_EE_CognitivAction_t obj) {
