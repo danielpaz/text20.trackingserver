@@ -23,6 +23,8 @@ package de.dfki.km.text20.trackingserver.brain.adapter.impl.emotiv.raw.v1;
 
 import java.util.concurrent.BlockingQueue;
 
+import net.xeoh.plugins.base.annotations.Capabilities;
+import net.xeoh.plugins.base.annotations.PluginImplementation;
 import net.xeoh.plugins.base.annotations.Timer;
 
 import de.dfki.km.text20.trackingserver.brain.adapter.BrainAdapter;
@@ -37,6 +39,7 @@ import de.dfki.km.text20.trackingserver.brain.adapter.impl.emotiv.raw.v1.wrapper
 import de.dfki.km.text20.trackingserver.brain.remote.TrackingDeviceInformation;
 import de.dfki.km.text20.trackingserver.brain.remote.TrackingEvent;
 
+@PluginImplementation
 public class BrainAdapterImpl implements BrainAdapter {
 
 	public final static int STATE_DISCONNECTED 		= 1; 
@@ -106,36 +109,36 @@ public class BrainAdapterImpl implements BrainAdapter {
 
 	@Override
 	public void start() {
-		if ( connected ) {
+		if ( this.connected ) {
 			return;
 		}
 		
-		eEvent 					= edk.EE_EmoEngineEventCreate();
-		eState 					= edk.EE_EmoStateCreate();
-		nSamplesTaken 			= edk.createPUInt(0);		
-		pUser 					= edk.createPUInt(0L);
+		this.eEvent 				= edk.EE_EmoEngineEventCreate();
+		this.eState 				= edk.EE_EmoStateCreate();
+		this.nSamplesTaken 			= edk.createPUInt(0);		
+		this.pUser 					= edk.createPUInt(0L);
 		
-		int connectionStatus 	= edk.EE_EngineConnect();
-		connected 				= (connectionStatus == EdkErrorCodes.EDK_OK);
-		readyToCollect			= false;
+		int connectionStatus 		= edk.EE_EngineConnect();
+		this.connected 				= (connectionStatus == EdkErrorCodes.EDK_OK);
+		this.readyToCollect			= false;
 
-		hData 					= edk.EE_DataCreate();
+		this.hData 					= edk.EE_DataCreate();
 		edk.EE_DataSetBufferSizeInSec(1.0f);
 		
-		if ( ! connected ) {
+		if ( ! this.connected ) {
 			stop();
 		}
 	}
 
 	@Override
 	public void stop() {
-		connected = false;
+		this.connected = false;
 		edk.EE_EngineDisconnect();
-		edk.EE_EmoStateFree(eState);
-		edk.EE_EmoEngineEventFree(eEvent);
-		edk.freePUInt(nSamplesTaken);
-		edk.freePUInt(pUser);
-		edk.EE_DataFree(hData);
+		edk.EE_EmoStateFree(this.eState);
+		edk.EE_EmoEngineEventFree(this.eEvent);
+		edk.freePUInt(this.nSamplesTaken);
+		edk.freePUInt(this.pUser);
+		edk.EE_DataFree(this.hData);
 	}
 
 	/**
@@ -144,25 +147,26 @@ public class BrainAdapterImpl implements BrainAdapter {
 	@Timer(period=50)
 	public void pollChannels(){
 		
-		if ( connected ) {
+		if ( this.connected ) {
 		
-			if ( readyToCollect ) {
+			if ( this.readyToCollect ) {
 				
-				edk.EE_DataUpdateHandle(user, hData);
-				edk.EE_DataGetNumberOfSample(hData, nSamplesTaken);
+				edk.EE_DataUpdateHandle(this.user, this.hData);
+				edk.EE_DataGetNumberOfSample(this.hData, this.nSamplesTaken);
 				
-				long sampleCount = edk.pUIntToUInt(nSamplesTaken);
+				long sampleCount = edk.pUIntToUInt(this.nSamplesTaken);
 				
 				if ( sampleCount > 0 ) {
-					SWIGTYPE_p_double 	buffer 	= edk.createDataBuffer(nSamplesTaken);
+					SWIGTYPE_p_double 	buffer 	= edk.createDataBuffer(this.nSamplesTaken);
 					
 					for ( int sample = 0; sample < sampleCount; sample++ ) {
 						
 						TrackingEvent t = new TrackingEvent();
+						// TODO: t.date = 
 						
-						for (  int i = 0; i < channels.length; i++ ) {
-							EE_DataChannel_t channel = channels[i];
-							edk.EE_DataGet(hData, channel, buffer, sampleCount);
+						for (  int i = 0; i < this.channels.length; i++ ) {
+							EE_DataChannel_t channel = this.channels[i];
+							edk.EE_DataGet(this.hData, channel, buffer, sampleCount);
 							
 							String channelName = "channel:"+channel.toString().replace("ED_", "").toLowerCase();
 							t.channels.put(channelName, edk.readFromDataBuffer(buffer, sample));
@@ -170,7 +174,7 @@ public class BrainAdapterImpl implements BrainAdapter {
 						
 						// enqueue event
 						try {
-							eventQueue.put(t);
+							this.eventQueue.put(t);
 						} catch (InterruptedException e) {
 							e.printStackTrace();
 						}
@@ -180,20 +184,29 @@ public class BrainAdapterImpl implements BrainAdapter {
 				}				
 			} else {
 				// not yet ready to collect data
-				edk.EE_EngineGetNextEvent(eEvent);
+				edk.EE_EngineGetNextEvent(this.eEvent);
 				
-				EE_Event_t eventType = edk.EE_EmoEngineEventGetType(eEvent);
+				EE_Event_t eventType = edk.EE_EmoEngineEventGetType(this.eEvent);
 
-				edk.EE_EmoEngineEventGetUserId(eEvent, pUser);
+				edk.EE_EmoEngineEventGetUserId(this.eEvent, this.pUser);
 				
 				if ( eventType == EE_Event_t.EE_UserAdded ) {	
 
-					user = edk.pUIntToUInt(pUser);
-					edk.EE_DataAcquisitionEnable(user,true);
+					this.user = edk.pUIntToUInt(this.pUser);
+					edk.EE_DataAcquisitionEnable(this.user,true);
 					
-					readyToCollect = true;
+					this.readyToCollect = true;
 				}
 			}
 		}
 	}
+	
+
+	/**
+     * @return .
+     */
+    @Capabilities
+    public String[] getCapabilities() {
+        return new String[] { "brainadapter:emotiv:raw" };
+    }
 }
