@@ -1,6 +1,7 @@
 package de.dfki.km.text20.trackingserver.brain.adapter.impl.emotiv.expressive.v1;
 
 import java.util.HashMap;
+import java.util.logging.Logger;
 
 import net.xeoh.plugins.base.PluginConfiguration;
 import net.xeoh.plugins.base.PluginManager;
@@ -10,7 +11,6 @@ import de.dfki.km.text20.trackingserver.brain.adapter.impl.emotiv.expressive.v1.
 import de.dfki.km.text20.trackingserver.brain.adapter.impl.emotiv.expressive.v1.braintracker.jna.types.EE_ExpressivAlgo_t;
 import de.dfki.km.text20.trackingserver.brain.adapter.impl.emotiv.expressive.v1.braintracker.jna.types.EmoEngineEventHandle;
 import de.dfki.km.text20.trackingserver.brain.adapter.impl.emotiv.expressive.v1.braintracker.jna.types.EmoStateHandle;
-
 
 /**
  * @author rb
@@ -31,6 +31,9 @@ public class LowLevelAdapter {
     protected EmoStateHandle eState;
 
     /** */
+    protected final Logger logger = Logger.getLogger(this.getClass().getName());
+
+    /** */
     public PluginConfiguration rawConfiguration;
 
     /** State of the brain tracker */
@@ -49,16 +52,17 @@ public class LowLevelAdapter {
 
         this.edk = EDK.INSTANCE;
 
+        // loading configuration from property file
         final PluginConfigurationUtil pcu = new PluginConfigurationUtil(this.rawConfiguration);
         final String connectorType = pcu.getString(LowLevelAdapter.class, "connector.type", "device");
 
         int connectionStatus = -1;
 
-       
+        // establishing connection to device or composer depending on connectorType value
         if ("device".equals(connectorType)) {
             connectionStatus = this.edk.EE_EngineConnect();
         }
-        
+
         if ("composer".equals(connectorType)) {
             final String simulatorServer = pcu.getString(LowLevelAdapter.class, "simulator.server", "127.0.0.1");
             final short simulatorPort = (short) pcu.getInt(LowLevelAdapter.class, "simulator.port", 1726);
@@ -75,7 +79,7 @@ public class LowLevelAdapter {
 
         this.connected = connectionStatus == EDK.EDK_OK;
         if (this.connected) {
-            System.out.println("brain tracker connected");
+            this.logger.info("Brain tracker connected");
         }
 
     }
