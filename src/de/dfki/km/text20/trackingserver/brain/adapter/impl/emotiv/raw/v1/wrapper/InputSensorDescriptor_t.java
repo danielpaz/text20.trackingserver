@@ -13,8 +13,8 @@ public class InputSensorDescriptor_t {
   protected boolean swigCMemOwn;
 
   protected InputSensorDescriptor_t(long cPtr, boolean cMemoryOwn) {
-    swigCMemOwn = cMemoryOwn;
-    swigCPtr = cPtr;
+    this.swigCMemOwn = cMemoryOwn;
+    this.swigCPtr = cPtr;
   }
 
   protected static long getCPtr(InputSensorDescriptor_t obj) {
@@ -27,61 +27,61 @@ protected void finalize() {
   }
 
   public synchronized void delete() {
-    if (swigCPtr != 0) {
-      if (swigCMemOwn) {
-        swigCMemOwn = false;
-        edkJNI.delete_InputSensorDescriptor_t(swigCPtr);
+    if (this.swigCPtr != 0) {
+      if (this.swigCMemOwn) {
+        this.swigCMemOwn = false;
+        edkJNI.delete_InputSensorDescriptor_t(this.swigCPtr);
       }
-      swigCPtr = 0;
+      this.swigCPtr = 0;
     }
   }
 
   public void setChannelId(SWIGTYPE_p_EE_InputChannels_t value) {
-    edkJNI.InputSensorDescriptor_t_channelId_set(swigCPtr, this, SWIGTYPE_p_EE_InputChannels_t.getCPtr(value));
+    edkJNI.InputSensorDescriptor_t_channelId_set(this.swigCPtr, this, SWIGTYPE_p_EE_InputChannels_t.getCPtr(value));
   }
 
   public SWIGTYPE_p_EE_InputChannels_t getChannelId() {
-    return new SWIGTYPE_p_EE_InputChannels_t(edkJNI.InputSensorDescriptor_t_channelId_get(swigCPtr, this), true);
+    return new SWIGTYPE_p_EE_InputChannels_t(edkJNI.InputSensorDescriptor_t_channelId_get(this.swigCPtr, this), true);
   }
 
   public void setFExists(int value) {
-    edkJNI.InputSensorDescriptor_t_fExists_set(swigCPtr, this, value);
+    edkJNI.InputSensorDescriptor_t_fExists_set(this.swigCPtr, this, value);
   }
 
   public int getFExists() {
-    return edkJNI.InputSensorDescriptor_t_fExists_get(swigCPtr, this);
+    return edkJNI.InputSensorDescriptor_t_fExists_get(this.swigCPtr, this);
   }
 
   public void setPszLabel(String value) {
-    edkJNI.InputSensorDescriptor_t_pszLabel_set(swigCPtr, this, value);
+    edkJNI.InputSensorDescriptor_t_pszLabel_set(this.swigCPtr, this, value);
   }
 
   public String getPszLabel() {
-    return edkJNI.InputSensorDescriptor_t_pszLabel_get(swigCPtr, this);
+    return edkJNI.InputSensorDescriptor_t_pszLabel_get(this.swigCPtr, this);
   }
 
   public void setXLoc(double value) {
-    edkJNI.InputSensorDescriptor_t_xLoc_set(swigCPtr, this, value);
+    edkJNI.InputSensorDescriptor_t_xLoc_set(this.swigCPtr, this, value);
   }
 
   public double getXLoc() {
-    return edkJNI.InputSensorDescriptor_t_xLoc_get(swigCPtr, this);
+    return edkJNI.InputSensorDescriptor_t_xLoc_get(this.swigCPtr, this);
   }
 
   public void setYLoc(double value) {
-    edkJNI.InputSensorDescriptor_t_yLoc_set(swigCPtr, this, value);
+    edkJNI.InputSensorDescriptor_t_yLoc_set(this.swigCPtr, this, value);
   }
 
   public double getYLoc() {
-    return edkJNI.InputSensorDescriptor_t_yLoc_get(swigCPtr, this);
+    return edkJNI.InputSensorDescriptor_t_yLoc_get(this.swigCPtr, this);
   }
 
   public void setZLoc(double value) {
-    edkJNI.InputSensorDescriptor_t_zLoc_set(swigCPtr, this, value);
+    edkJNI.InputSensorDescriptor_t_zLoc_set(this.swigCPtr, this, value);
   }
 
   public double getZLoc() {
-    return edkJNI.InputSensorDescriptor_t_zLoc_get(swigCPtr, this);
+    return edkJNI.InputSensorDescriptor_t_zLoc_get(this.swigCPtr, this);
   }
 
   public InputSensorDescriptor_t() {

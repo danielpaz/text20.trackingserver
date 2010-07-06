@@ -12,12 +12,12 @@ public final class EE_ExpressivThreshold_t {
   public final static EE_ExpressivThreshold_t EXP_SENSITIVITY = new EE_ExpressivThreshold_t("EXP_SENSITIVITY");
 
   public final int swigValue() {
-    return swigValue;
+    return this.swigValue;
   }
   
   @Override
   public String toString() {
-    return swigName;
+    return this.swigName;
   }
 
   public static EE_ExpressivThreshold_t swigToEnum(int swigValue) {

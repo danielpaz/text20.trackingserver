@@ -22,12 +22,12 @@ public final class EE_Event_t {
   public final static EE_Event_t EE_AllEvent = new EE_Event_t("EE_AllEvent", edkJNI.EE_AllEvent_get());
 
   public final int swigValue() {
-    return swigValue;
+    return this.swigValue;
   }
 
   @Override
   public String toString() {
-    return swigName;
+    return this.swigName;
   }
 
   public static EE_Event_t swigToEnum(int swigValue) {

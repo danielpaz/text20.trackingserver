@@ -13,12 +13,12 @@ public final class EE_ExpressivSignature_t {
   public final static EE_ExpressivSignature_t EXP_SIG_TRAINED = new EE_ExpressivSignature_t("EXP_SIG_TRAINED");
 
   public final int swigValue() {
-    return swigValue;
+    return this.swigValue;
   }
 
   @Override
   public String toString() {
-    return swigName;
+    return this.swigName;
   }
 
   public static EE_ExpressivSignature_t swigToEnum(int swigValue) {
