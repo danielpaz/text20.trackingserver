@@ -23,9 +23,11 @@ package de.dfki.km.text20.trackingserver.brain.adapter.impl.emotiv.expressive.v1
 
 import java.util.concurrent.BlockingQueue;
 
+import net.xeoh.plugins.base.PluginManager;
 import net.xeoh.plugins.base.annotations.Capabilities;
 import net.xeoh.plugins.base.annotations.PluginImplementation;
 import net.xeoh.plugins.base.annotations.Timer;
+import net.xeoh.plugins.base.annotations.injections.InjectPlugin;
 import de.dfki.km.text20.trackingserver.brain.adapter.BrainAdapter;
 import de.dfki.km.text20.trackingserver.brain.remote.TrackingDeviceInformation;
 import de.dfki.km.text20.trackingserver.brain.remote.TrackingEvent;
@@ -41,13 +43,17 @@ public class BrainAdapterImpl implements BrainAdapter {
 	
 	BlockingQueue<TrackingEvent> eventQueue;
 
+	/** */ 
+	@InjectPlugin
+	public PluginManager pluginManager;
+	
     /* (non-Javadoc)
      * @see de.dfki.km.text20.trackingserver.brain.adapter.BrainAdapter#start()
      */
     @Override
     public void start() {
-    	lowLevelAdapter= new LowLevelAdapter();
-        lowLevelAdapter.connectToEngine();  
+    	this.lowLevelAdapter = new LowLevelAdapter(this.pluginManager);
+        this.lowLevelAdapter.connectToEngine();
     }
 
     /* (non-Javadoc)
@@ -83,12 +89,12 @@ public class BrainAdapterImpl implements BrainAdapter {
 	@Timer(period=50)
 	public void pollChannels(){
 		try{
-			if(lowLevelAdapter!=null){
+			if(this.lowLevelAdapter!=null){
 				TrackingEvent t = new TrackingEvent();
-				t.channels = lowLevelAdapter.getBrainEvent();
+				t.channels = this.lowLevelAdapter.getBrainEvent();
 				if(t.channels!=null){				
 					try {
-						eventQueue.put(t);
+						this.eventQueue.put(t);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
@@ -105,6 +111,6 @@ public class BrainAdapterImpl implements BrainAdapter {
      */
     @Capabilities
     public String[] getCapabilities() {
-        return new String[] { "brainadapter:emotiv" };
+        return new String[] { "brainadapter:emotiv:expressive" };
     }
 }
