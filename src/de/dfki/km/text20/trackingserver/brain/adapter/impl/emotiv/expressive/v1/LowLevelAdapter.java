@@ -89,6 +89,7 @@ public class LowLevelAdapter {
      * 
      * @return The channels and their corresponding values
      */
+    @SuppressWarnings("boxing")
     public HashMap<String, Double> getBrainEvent() {
         if (this.connected) {
             this.state = this.edk.EE_EngineGetNextEvent(this.eEvent);
