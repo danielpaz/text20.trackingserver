@@ -16,6 +16,7 @@ public final class EE_ExpressivSignature_t {
     return swigValue;
   }
 
+  @Override
   public String toString() {
     return swigName;
   }
