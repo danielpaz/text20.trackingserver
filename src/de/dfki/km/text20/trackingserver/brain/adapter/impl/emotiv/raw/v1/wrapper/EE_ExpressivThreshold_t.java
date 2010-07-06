@@ -14,7 +14,8 @@ public final class EE_ExpressivThreshold_t {
   public final int swigValue() {
     return swigValue;
   }
-
+  
+  @Override
   public String toString() {
     return swigName;
   }

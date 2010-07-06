@@ -39,6 +39,7 @@ public final class EE_DataChannel_t {
     return swigValue;
   }
 
+  @Override
   public String toString() {
     return swigName;
   }

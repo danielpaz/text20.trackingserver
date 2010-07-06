@@ -23,7 +23,8 @@ public final class EE_CognitivEvent_t {
   public final int swigValue() {
     return swigValue;
   }
-
+  
+  @Override
   public String toString() {
     return swigName;
   }

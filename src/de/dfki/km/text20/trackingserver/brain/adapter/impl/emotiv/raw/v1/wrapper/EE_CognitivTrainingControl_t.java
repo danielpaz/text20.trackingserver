@@ -20,6 +20,7 @@ public final class EE_CognitivTrainingControl_t {
     return swigValue;
   }
 
+  @Override
   public String toString() {
     return swigName;
   }

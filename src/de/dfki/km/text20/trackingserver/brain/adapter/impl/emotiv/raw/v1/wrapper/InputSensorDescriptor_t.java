@@ -21,7 +21,8 @@ public class InputSensorDescriptor_t {
     return (obj == null) ? 0 : obj.swigCPtr;
   }
 
-  protected void finalize() {
+  @Override
+protected void finalize() {
     delete();
   }
 

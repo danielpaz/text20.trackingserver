@@ -22,6 +22,7 @@ public final class EE_ExpressivEvent_t {
     return swigValue;
   }
 
+  @Override
   public String toString() {
     return swigName;
   }
