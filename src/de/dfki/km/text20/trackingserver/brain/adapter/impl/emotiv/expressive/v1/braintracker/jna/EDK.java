@@ -68,7 +68,7 @@ public interface EDK extends Library {
 	
 	public float ES_AffectivGetEngagementBoredomScore(EmoStateHandle state);
 	
-	public  float ES_CognitivGetCurrentActionPower(EmoStateHandle state);
+	public float ES_CognitivGetCurrentActionPower(EmoStateHandle state);
 	
 	public EE_SignalStrength_t ES_GetWirelessSignalStatus(EmoStateHandle state);
 	
