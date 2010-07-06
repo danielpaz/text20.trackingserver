@@ -55,6 +55,10 @@ public class SimulatingGazeAdapter implements GazeAdapter {
      */
     public void setup(BlockingQueue<TrackingEvent> eventQueue) {
         this.trackingDeviceInfo = new TrackingDeviceInformation();
+        this.trackingDeviceInfo.deviceName = "Simulator";       
+        this.trackingDeviceInfo.hardwareID = "simulator/v0";       
+        this.trackingDeviceInfo.trackingDeviceManufacturer = "Text 2.0 Project";       
+
         this.queue = eventQueue;
     }
 

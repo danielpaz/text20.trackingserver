@@ -59,11 +59,15 @@ public class Launcher {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+        
         props.setProperty(PluginManager.class, "logging.level", "INFO");
-
+        props.setProperty(PluginManager.class, "cache.enabled", "true");
+        props.setProperty(PluginManager.class, "cache.mode",    "weak"); //optional
+        
+        
         final PluginManager pluginManager = PluginManagerFactory.createPluginManager(props);
-        pluginManager.addPluginsFrom(new URI("classpath://*"));
+        
         pluginManager.addPluginsFrom(new File("plugins/").toURI());
+        pluginManager.addPluginsFrom(new URI("classpath://*"));
     }
 }
