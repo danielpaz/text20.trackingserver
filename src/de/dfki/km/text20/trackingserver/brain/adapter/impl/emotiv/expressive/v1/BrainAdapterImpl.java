@@ -43,6 +43,7 @@ public class BrainAdapterImpl implements BrainAdapter {
 	
 	BlockingQueue<TrackingEvent> eventQueue;
 
+	/** */ 
 	@InjectPlugin
 	public PluginManager pluginManager;
 	
@@ -51,8 +52,8 @@ public class BrainAdapterImpl implements BrainAdapter {
      */
     @Override
     public void start() {
-    	lowLevelAdapter = new LowLevelAdapter(pluginManager);
-        lowLevelAdapter.connectToEngine();
+    	this.lowLevelAdapter = new LowLevelAdapter(this.pluginManager);
+        this.lowLevelAdapter.connectToEngine();
     }
 
     /* (non-Javadoc)
@@ -88,12 +89,12 @@ public class BrainAdapterImpl implements BrainAdapter {
 	@Timer(period=50)
 	public void pollChannels(){
 		try{
-			if(lowLevelAdapter!=null){
+			if(this.lowLevelAdapter!=null){
 				TrackingEvent t = new TrackingEvent();
-				t.channels = lowLevelAdapter.getBrainEvent();
+				t.channels = this.lowLevelAdapter.getBrainEvent();
 				if(t.channels!=null){				
 					try {
-						eventQueue.put(t);
+						this.eventQueue.put(t);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}

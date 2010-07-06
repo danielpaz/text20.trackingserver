@@ -23,10 +23,18 @@ package de.dfki.km.text20.trackingserver.brain.adapter.impl.emotiv.expressive.v1
 
 import de.dfki.km.text20.trackingserver.brain.adapter.ChannelValue;
 
+/**
+ * @author rb
+ *
+ */
 public class ChannelValueImpl implements ChannelValue {
     private double value;
     private String id;
 
+    /**
+     * @param id
+     * @param value
+     */
     public ChannelValueImpl(String id, double value) {
         this.id = id;
         this.value = value;
@@ -34,14 +42,12 @@ public class ChannelValueImpl implements ChannelValue {
 
     @Override
     public String getID() {
-        // TODO Auto-generated method stub
-        return null;
+        return this.id;
     }
 
     @Override
     public double getValue() {
-        // TODO Auto-generated method stub
-        return 0;
+        return this.value;
     }
 
 }
