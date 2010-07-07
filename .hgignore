@@ -7,3 +7,5 @@ syntax: regexp
 ^ant\.build$
 syntax: regexp
 ^dist$
+syntax: regexp
+^jspf\.plugin\.cache$
