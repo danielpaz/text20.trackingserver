@@ -69,10 +69,10 @@ public class TobiiGazeAdapter implements GazeAdapter {
 
     // TODO: Create superclass and unify the two calibrators
     /** */
-    final TobiiCalibratorV2 calibratorV2 = new TobiiCalibratorV2();;
+    final TobiiCalibratorV2 calibratorV2 = new TobiiCalibratorV2();
     
     /** */
-    final TobiiCalibratorV5 calibratorV5 = new TobiiCalibratorV5();;
+    final TobiiCalibratorV5 calibratorV5 = new TobiiCalibratorV5();
 
     /** */
     final Lock callbacksLock = new ReentrantLock();
@@ -102,7 +102,7 @@ public class TobiiGazeAdapter implements GazeAdapter {
                                final AdapterCommandOption... options) {
         switch (command) {
         case CALIBRATE:
-            calibrateOp(options);
+            calibrateAdapter(options);
             break;
         //    	case CALIBRATE_PRINT: calibratorV2.printout(); break;
         default:
@@ -150,11 +150,14 @@ public class TobiiGazeAdapter implements GazeAdapter {
 
             EyeTracker2Java.initialize();
 
+            
             // Obtain remote TET ip
             final String remoteTETServer = configuration.getString(getClass(), "tobii.server", "127.0.0.1");
 
             // Set IP to preferences
             final Preferences p = PreferencesUtil.newPreferences();
+
+            
             
             // Setting up Tet Session depending on the api version given in the config file
             final String tetApiVersion = configuration.getString(TobiiGazeAdapter.class, "tobii.api");
@@ -168,13 +171,18 @@ public class TobiiGazeAdapter implements GazeAdapter {
                 this.logger.info("Using Tet Api Version 5");
             }
             
+            
+            // Setup screensizes (TODO: Do we really need this?)
             p.node(FilterRegistry.GLOBAL_PREFERENCES).put("SCREEN_WIDTH", configuration.getString(TrackingServerRegistryImpl.class, "screen.width"));
             p.node(FilterRegistry.GLOBAL_PREFERENCES).put("SCREEN_HEIGHT", configuration.getString(TrackingServerRegistryImpl.class, "screen.height"));
 
             this.minDistance = configuration.getFloat(TobiiGazeAdapter.class, "device.distance.min", 200f);
             this.maxDistance = configuration.getFloat(TobiiGazeAdapter.class, "device.distance.max", 700f);
 
+            
+            // Get TET port
             final int remoteTETServerPort = configuration.getInt(getClass(), "tobii.port", 4455);
+           
             
             // Setting up calibrator
             if ("v2".equals(tetApiVersion)) {
@@ -184,7 +192,9 @@ public class TobiiGazeAdapter implements GazeAdapter {
                 this.calibratorV5.buildUp(remoteTETServer, remoteTETServerPort);
             }
 
-            // Create new source and filter
+            
+            
+            // Create new EyeTracker2Java session and filter
             final TrackingSession session;
             if ("v2".equals(tetApiVersion)) {
                 session = TrackingSessionManager.getInstance().createSession(SessionMode.LiveTetSessionV2, p);
@@ -196,12 +206,17 @@ public class TobiiGazeAdapter implements GazeAdapter {
                 this.logger.warning("Unexpected Error. No TrackingSession instantiated!");
             }
             
+            
+            // Prepare chain elements
             final FilterDefinition filterPixelCoords = new FilterDefinition(PixelCoordsFilter.class.getName());
             final FilterDefinition filterSingleCoords = new FilterDefinition(SingleCoordCombinationFilter.class.getName());
 
+            
             // Create filter output
             final FilterOutput output = FilterChainBuilder.addFilterChain(session, filterPixelCoords, filterSingleCoords);
 
+            
+            // Setup device info
             this.trackingDeviceInfo = new TrackingDeviceInformation();
             this.trackingDeviceInfo.trackingDeviceManufacturer = "Tobii";
             this.trackingDeviceInfo.deviceName = configuration.getString(TobiiGazeAdapter.class, "device.name", "unknown");
@@ -245,7 +260,10 @@ public class TobiiGazeAdapter implements GazeAdapter {
         }
     }
 
-    private void calibrateOp(final AdapterCommandOption... options) {
+    /**
+     * @param options
+     */
+    private void calibrateAdapter(final AdapterCommandOption... options) {
         final OptionUtils<AdapterCommandOption> ou = new OptionUtils<AdapterCommandOption>(options);
 
         if (ou.contains(OptionCalibratorNumPoints.class)) {
