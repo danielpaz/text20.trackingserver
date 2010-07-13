@@ -92,9 +92,8 @@ public class TrackingServerRegistryImpl extends CommonServerRegistry<TrackingEve
 
                 // ... and output something regularly to check we are still running fine.
                 if(this.numEventsReceived % 1000 == 0) {
-                    this.logger.fine("Still running.");
+                    this.logger.fine("Still running. Tracking event : " + latestEvent);
                 }
-
                 
                 // Filter events
                 final TrackingEvent filteredEvent = filterEvent(latestEvent);
