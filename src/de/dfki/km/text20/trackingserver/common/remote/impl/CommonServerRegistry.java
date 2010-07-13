@@ -97,13 +97,18 @@ public class CommonServerRegistry<T extends CommonTrackingEvent, C extends Commo
     /** ID of the adapter to use */
     protected String adapterID = "undefined";
 
+    /** Adapter used */
     protected A usedAdpater;
+    
 
     /** */
     @Init
     public void init() {
         final PluginConfigurationUtil pcu = new PluginConfigurationUtil(this.configuration);
         this.adapterID = pcu.getString(getClass(), "adapter.id");
+        
+        // Debug the used adapter.
+        this.logger.info("Requested adapter " + this.adapterID);
 
         // Export the plugin
         final ExportResult exportResult = this.remoteAPILipe.exportPlugin(this);
@@ -153,6 +158,8 @@ public class CommonServerRegistry<T extends CommonTrackingEvent, C extends Commo
     }
 
     /**
+     * Callback for every loaded adapter.
+     * 
      * @param adapter
      */
     @PluginLoaded
@@ -170,7 +177,13 @@ public class CommonServerRegistry<T extends CommonTrackingEvent, C extends Commo
         }
     }
 
+    /**
+     * Sets up the given adapter.
+     * 
+     * @param adapter
+     */
     private void setupAdapter(A adapter) {
+        this.logger.fine("Starting adapter " + adapter);
         this.usedAdpater = adapter;
         this.usedAdpater.setup(this.events);
         this.usedAdpater.start();

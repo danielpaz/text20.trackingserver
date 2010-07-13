@@ -57,6 +57,7 @@ public class TrackingServerRegistryImpl extends CommonServerRegistry<TrackingEve
     @Override
     @Thread(isDaemonic = false)
     public void senderThread() {
+        
         int numMisdetected = 0;
 
         while (true) {
@@ -83,7 +84,18 @@ public class TrackingServerRegistryImpl extends CommonServerRegistry<TrackingEve
                 }
                 // Increase number of successful events
                 this.numEventsReceived++;
+                
+                // Output something if we are running fine ...
+                if(this.numEventsReceived == 100) {
+                    this.logger.info("Received a number of events. Should be running fine.");
+                }
 
+                // ... and output something regularly to check we are still running fine.
+                if(this.numEventsReceived % 1000 == 0) {
+                    this.logger.fine("Still running.");
+                }
+
+                
                 // Filter events
                 final TrackingEvent filteredEvent = filterEvent(latestEvent);
 
@@ -102,6 +114,10 @@ public class TrackingServerRegistryImpl extends CommonServerRegistry<TrackingEve
         }
     }
 
+    /**
+     * @param latestEvent
+     * @return
+     */
     private TrackingEvent filterEvent(TrackingEvent latestEvent) {
         // Sanity check
         if (latestEvent == null) return null;
@@ -125,6 +141,8 @@ public class TrackingServerRegistryImpl extends CommonServerRegistry<TrackingEve
     @Override
     @SuppressWarnings("boxing")
     public void sendCommand(TrackingCommand command, SendCommandOption... options) {
+        this.logger.fine("Received command " + command);
+        
         if (this.usedAdpater == null) return;
 
         // Process our options
