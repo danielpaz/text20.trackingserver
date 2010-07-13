@@ -21,10 +21,13 @@
  */
 package de.dfki.km.text20.trackingserver;
 
+import static net.jcores.CoreKeeper.$;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -45,9 +48,19 @@ public class Launcher {
      * @throws MalformedURLException
      * @throws UnknownHostException
      * @throws URISyntaxException
+     * @throws FileNotFoundException 
      */
-    public static void main(String[] args) throws MalformedURLException, UnknownHostException, URISyntaxException {
+    public static void main(String[] args) throws MalformedURLException,
+                                          UnknownHostException, URISyntaxException,
+                                          FileNotFoundException {
 
+        // The first thing we do is to redirect std out / std err (Fixed #10)
+        if ($(args).filter("-noredirect").size() == 0) {
+            System.setOut(new PrintStream("output.log"));
+            System.setErr(new PrintStream("error.log"));
+        }
+
+        // Now we start JSPF and the rest
         final JSPFProperties props = new JSPFProperties();
 
         try {
@@ -58,7 +71,6 @@ public class Launcher {
             e.printStackTrace();
         }
 
-        props.setProperty(PluginManager.class, "logging.level", "INFO");
         props.setProperty(PluginManager.class, "cache.enabled", "true");
         props.setProperty(PluginManager.class, "cache.mode", "weak"); //optional
 
