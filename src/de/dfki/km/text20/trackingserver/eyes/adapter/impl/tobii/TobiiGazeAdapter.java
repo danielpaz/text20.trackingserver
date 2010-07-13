@@ -26,7 +26,8 @@ import de.dfki.eyetracker.filter.FilterRegistry;
 import de.dfki.eyetracker.filter.FilterStage;
 import de.dfki.eyetracker.filter.impl.PixelCoordsFilter;
 import de.dfki.eyetracker.filter.impl.SingleCoordCombinationFilter;
-import de.dfki.eyetracker.session.LiveTetSession;
+import de.dfki.eyetracker.session.LiveTetSessionV2;
+import de.dfki.eyetracker.session.LiveTetSessionV5;
 import de.dfki.eyetracker.session.SessionMode;
 import de.dfki.eyetracker.session.TrackingSession;
 import de.dfki.eyetracker.session.TrackingSessionManager;
@@ -66,7 +67,12 @@ public class TobiiGazeAdapter implements GazeAdapter {
     /** */
     final List<TrackingClientCallback> allCallbacks = new ArrayList<TrackingClientCallback>();
 
-    final TobiiCalibrator calibrator = new TobiiCalibrator();
+    // TODO: Create superclass and unify the two calibrators
+    /** */
+    final TobiiCalibratorV2 calibratorV2 = new TobiiCalibratorV2();;
+    
+    /** */
+    final TobiiCalibratorV5 calibratorV5 = new TobiiCalibratorV5();;
 
     /** */
     final Lock callbacksLock = new ReentrantLock();
@@ -98,7 +104,7 @@ public class TobiiGazeAdapter implements GazeAdapter {
         case CALIBRATE:
             calibrateOp(options);
             break;
-        //    	case CALIBRATE_PRINT: calibrator.printout(); break;
+        //    	case CALIBRATE_PRINT: calibratorV2.printout(); break;
         default:
             this.logger.warning("Unknown command " + command);
             break;
@@ -149,18 +155,47 @@ public class TobiiGazeAdapter implements GazeAdapter {
 
             // Set IP to preferences
             final Preferences p = PreferencesUtil.newPreferences();
-            p.node(FilterRegistry.GLOBAL_PREFERENCES).put(LiveTetSession.PREFKEY_TET_SERVER, remoteTETServer);
+            
+            // Setting up Tet Session depending on the api version given in the config file
+            final String tetApiVersion = configuration.getString(TobiiGazeAdapter.class, "tobii.api");
+            
+            if ("v2".equals(tetApiVersion)) {
+                p.node(FilterRegistry.GLOBAL_PREFERENCES).put(LiveTetSessionV2.PREFKEY_TET_SERVER, remoteTETServer);
+                this.logger.info("Using Tet Api Version 2");
+            }
+            if ("v5".equals(tetApiVersion)) {
+                p.node(FilterRegistry.GLOBAL_PREFERENCES).put(LiveTetSessionV5.PREFKEY_TET_SERVER, remoteTETServer);
+                this.logger.info("Using Tet Api Version 5");
+            }
+            
             p.node(FilterRegistry.GLOBAL_PREFERENCES).put("SCREEN_WIDTH", configuration.getString(TrackingServerRegistryImpl.class, "screen.width"));
             p.node(FilterRegistry.GLOBAL_PREFERENCES).put("SCREEN_HEIGHT", configuration.getString(TrackingServerRegistryImpl.class, "screen.height"));
 
             this.minDistance = configuration.getFloat(TobiiGazeAdapter.class, "device.distance.min", 200f);
             this.maxDistance = configuration.getFloat(TobiiGazeAdapter.class, "device.distance.max", 700f);
 
-            // TODO: Use proper port ... 
-            this.calibrator.buildUp(remoteTETServer, 4455);
+            final int remoteTETServerPort = configuration.getInt(getClass(), "tobii.port", 4455);
+            
+            // Setting up calibrator
+            if ("v2".equals(tetApiVersion)) {
+                this.calibratorV2.buildUp(remoteTETServer, remoteTETServerPort);
+            }
+            if ("v5".equals(tetApiVersion)) {
+                this.calibratorV5.buildUp(remoteTETServer, remoteTETServerPort);
+            }
 
-            // Create new source and filters
-            final TrackingSession session = TrackingSessionManager.getInstance().createSession(SessionMode.LiveTetSession, p);
+            // Create new source and filter
+            final TrackingSession session;
+            if ("v2".equals(tetApiVersion)) {
+                session = TrackingSessionManager.getInstance().createSession(SessionMode.LiveTetSessionV2, p);
+            } else
+            if ("v5".equals(tetApiVersion)) {
+                session = TrackingSessionManager.getInstance().createSession(SessionMode.LiveTetSessionV5, p);
+            } else {
+                session = null;
+                this.logger.warning("Unexpected Error. No TrackingSession instantiated!");
+            }
+            
             final FilterDefinition filterPixelCoords = new FilterDefinition(PixelCoordsFilter.class.getName());
             final FilterDefinition filterSingleCoords = new FilterDefinition(SingleCoordCombinationFilter.class.getName());
 
@@ -215,21 +250,25 @@ public class TobiiGazeAdapter implements GazeAdapter {
 
         if (ou.contains(OptionCalibratorNumPoints.class)) {
             final OptionCalibratorNumPoints numPoints = ou.get(OptionCalibratorNumPoints.class);
-            this.calibrator.setNumPoints(numPoints.getNumPoints());
+            this.calibratorV2.setNumPoints(numPoints.getNumPoints());
+            this.calibratorV5.setNumPoints(numPoints.getNumPoints());
         }
 
         if (ou.contains(OptionCalibratorColor.class)) {
             final OptionCalibratorColor color = ou.get(OptionCalibratorColor.class);
-            this.calibrator.setColor(color.getPointColor(), color.getBgColor());
+            this.calibratorV2.setColor(color.getPointColor(), color.getBgColor());
+            this.calibratorV5.setColor(color.getPointColor(), color.getBgColor());
         }
 
         if (ou.contains(OptionCalibratorPointSpeed.class)) {
             final OptionCalibratorPointSpeed speed = ou.get(OptionCalibratorPointSpeed.class);
-            this.calibrator.setPointSpeed(speed.getPointSpeed());
+            this.calibratorV2.setPointSpeed(speed.getPointSpeed());
+            this.calibratorV5.setPointSpeed(speed.getPointSpeed());
         }
 
         try {
-            this.calibrator.calibrate();
+            this.calibratorV2.calibrate();
+            this.calibratorV5.calibrate();
         } catch (final Throwable e) {
             e.printStackTrace();
         }
