@@ -6,17 +6,17 @@ import java.util.logging.Logger;
 import com4j.ComException;
 
 import de.dfki.eyetracker.EyetrackerException;
-import de.dfki.eyetracker.tetapi.ClassFactory;
-import de.dfki.eyetracker.tetapi.ITetCalibProc;
-import de.dfki.eyetracker.tetapi.TetCalibPointSpeed;
-import de.dfki.eyetracker.tetapi.TetCalibType;
-import de.dfki.eyetracker.tetapi.TetNumCalibPoints;
+import de.dfki.eyetracker.tetapi.common.TetNumCalibPoints;
+import de.dfki.eyetracker.tetapi.v5.ClassFactory;
+import de.dfki.eyetracker.tetapi.v5.ITetCalibProc;
+import de.dfki.eyetracker.tetapi.v5.TetCalibPointSpeed;
+import de.dfki.eyetracker.tetapi.v5.TetCalibType;
 
 /**
  * @author Eugen Massini
  * 
  */
-public class TobiiCalibrator {
+public class TobiiCalibratorV5 {
 	/** */
     final Logger logger = Logger.getLogger(this.getClass().getName());
 
@@ -62,7 +62,7 @@ public class TobiiCalibrator {
 	/**
      * 
      */
-	public TobiiCalibrator() {
+	public TobiiCalibratorV5() {
 		this.numPoints = TetNumCalibPoints.TetNumCalibPoints_5;
 		this.pointSpeed = TetCalibPointSpeed.TetCalibPointSpeed_Medium;
 		this.pointColor = getBGR(new Color(100, 100, 255));
@@ -189,7 +189,7 @@ public class TobiiCalibrator {
 	}
 
 	/**
-	 * close connection to the calibrator and release com-object
+	 * close connection to the calibratorV2 and release com-object
 	 */
 	// public void quit() {
 	// if (this.calib != null){
