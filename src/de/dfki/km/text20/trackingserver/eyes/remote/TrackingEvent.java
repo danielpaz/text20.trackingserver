@@ -41,25 +41,25 @@ public class TrackingEvent extends CommonTrackingEvent {
     /** Gaze position of the right eye, of null if invalid */
     public Point rightGaze;
 
-    /** Gaze position for left eye  (from 0.0 to 1.0) */
+    /** Gaze position for left eye  (from 0.0 to 1.0) (or set to null if invalid) */
     public float[] gazeLeftPos = new float[2];
 
-    /** Gaze position for right eye  (from 0.0 to 1.0)  */
+    /** Gaze position for right eye  (from 0.0 to 1.0) (or set to null if invalid)  */
     public float[] gazeRightPos = new float[2];
 
-    /** Measured size of the left pupil (in mm) */
+    /** Measured size of the left pupil (in mm) (or 0 if invalid) */
     public float pupilSizeLeft;
 
-    /** Measured size of the right pupil (in mm) */
+    /** Measured size of the right pupil (in mm) (or 0 if invalid) */
     public float pupilSizeRight;
 
-    /** position of left eye (in values from 0.0 to 1.0 relative to the bounding box) */
+    /** position of left eye (in values from 0.0 to 1.0 relative to the bounding box)  (or set to null if invalid) */
     public float[] leftEyePos = new float[3];
 
-    /** position of right eye (in values from 0.0 to 1.0 relative to the bounding box) */
+    /** position of right eye (in values from 0.0 to 1.0 relative to the bounding box)  (or set to null if invalid) */
     public float[] rightEyePos = new float[3];
 
-    /** Distances in mm */
+    /** Distances in mm  (or set to null if invalid) */
     public float[] eyeDistances = new float[2];
 
     // Old values go here (and will be removed soon)
