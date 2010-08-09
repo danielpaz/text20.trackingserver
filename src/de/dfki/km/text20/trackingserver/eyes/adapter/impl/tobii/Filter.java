@@ -65,10 +65,12 @@ class Filter extends AbstractEventFilter {
 
             // Setup a serializable tracking event 
             final TrackingEvent trackingEvent = new TrackingEvent();
+            
+            // TODO: Set event validity properly!
 
             trackingEvent.date = System.currentTimeMillis();
 
-            // Deprecated
+            // Deprecated. TODO: Remove me. 
             trackingEvent._centerX = x;
             trackingEvent._centerY = y;
             trackingEvent._centerValidity = valitity;
