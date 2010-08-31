@@ -56,7 +56,7 @@ public class SimulatingBrainAdapter implements BrainAdapter {
     }
 
     /** Retrieves the events from the brain tracker */
-    @Timer(period = 50)
+    @Timer(period = 8)
     public void pollChannels() {
         TrackingEvent trackingEvent = new TrackingEvent();
         
