@@ -47,17 +47,28 @@ import de.dfki.km.text20.trackingserver.eyes.remote.options.sendcommand.OptionRe
  * @author rb
  */
 @PluginImplementation
-public class TrackingServerRegistryImpl extends CommonServerRegistry<TrackingEvent, TrackingClientCallback, TrackingDeviceInformation, GazeAdapter>
+public class TrackingServerRegistryImpl
+        extends
+        CommonServerRegistry<TrackingEvent, TrackingClientCallback, TrackingDeviceInformation, GazeAdapter>
         implements TrackingServerRegistry {
 
     /** */
     ReferenceBasedDisplacementFilter displacementFilter = new ReferenceBasedDisplacementFilter();
 
+    /*
+        @Override
+        public void addTrackingListener(TrackingClientCallback callback) {
+            System.out.println("ADDDDEDEDEDE");
+            // TODO Auto-generated method stub
+            super.addTrackingListener(callback);
+        }
+
+    */
     /** */
     @Override
     @Thread(isDaemonic = false)
     public void senderThread() {
-        
+
         int numMisdetected = 0;
 
         while (true) {
@@ -84,19 +95,49 @@ public class TrackingServerRegistryImpl extends CommonServerRegistry<TrackingEve
                 }
                 // Increase number of successful events
                 this.numEventsReceived++;
-                
+
                 // Output something if we are running fine ...
-                if(this.numEventsReceived == 100) {
+                if (this.numEventsReceived == 100) {
                     this.logger.info("Received a number of events. Should be running fine.");
                 }
 
                 // ... and output something regularly to check we are still running fine.
-                if(this.numEventsReceived % 1000 == 0) {
+                if (this.numEventsReceived % 1000 == 0) {
                     this.logger.fine("Still running. Tracking event : " + latestEvent);
                 }
-                
+
+                if (latestEvent != null) {
+                    final StringBuilder sb = new StringBuilder();
+                    sb.append("L ");
+                    sb.append(latestEvent.centerGaze);
+                    sb.append(" ");
+                    sb.append(latestEvent.leftGaze);
+                    sb.append(" ");
+                    sb.append(latestEvent.rightGaze);
+                    sb.append(" ");
+                    sb.append(latestEvent._centerX);
+                    sb.append(" ");
+                    sb.append(latestEvent._centerY);
+                    this.logger.finer(sb.toString());
+                }
+
                 // Filter events
                 final TrackingEvent filteredEvent = filterEvent(latestEvent);
+
+                if (filteredEvent != null) {
+                    final StringBuilder sb = new StringBuilder();
+                    sb.append("L ");
+                    sb.append(filteredEvent.centerGaze);
+                    sb.append(" ");
+                    sb.append(filteredEvent.leftGaze);
+                    sb.append(" ");
+                    sb.append(filteredEvent.rightGaze);
+                    sb.append(" ");
+                    sb.append(filteredEvent._centerX);
+                    sb.append(" ");
+                    sb.append(filteredEvent._centerY);
+                    this.logger.finer(sb.toString());
+                }
 
                 // Send evens to listener
                 this.callbacksLock.lock();
@@ -125,6 +166,8 @@ public class TrackingServerRegistryImpl extends CommonServerRegistry<TrackingEve
         // values.
         if (this.displacementFilter != null && latestEvent.centerGaze != null) {
             latestEvent.centerGaze = this.displacementFilter.filterEvent(latestEvent.centerGaze);
+            latestEvent.leftGaze = this.displacementFilter.filterEvent(latestEvent.leftGaze);
+            latestEvent.rightGaze = this.displacementFilter.filterEvent(latestEvent.rightGaze);
             latestEvent._centerX = latestEvent.centerGaze.x;
             latestEvent._centerY = latestEvent.centerGaze.y;
         }
@@ -141,48 +184,46 @@ public class TrackingServerRegistryImpl extends CommonServerRegistry<TrackingEve
     @SuppressWarnings("boxing")
     public void sendCommand(TrackingCommand command, SendCommandOption... options) {
         this.logger.fine("Received command " + command);
-        
         if (this.usedAdpater == null) return;
 
         // Process our options
         final OptionUtils<SendCommandOption> ou = new OptionUtils<SendCommandOption>(options);
 
         switch (command) {
-            case START:
-                this.usedAdpater.start();
-                break;
-            case STOP:
-                this.usedAdpater.stop();
-                break;
-            case ONLINE_RECALIBRATION:
-                this.logger.info("Performing an internal recalibration");
-                if (!ou.contains(OptionRecalibrationPattern.class)) break;
-    
-                final OptionRecalibrationPattern rcp = ou.get(OptionRecalibrationPattern.class);
-                final List<Object[]> points = rcp.getPoints();
-    
-                this.displacementFilter.clearReferencePoints();
-    
-                for (Object[] objects : points) {
-                    if (objects.length != 4) continue;
-    
-                    final Point point = (Point) objects[0];
-                    final Integer dx = (Integer) objects[1];
-                    final Integer dy = (Integer) objects[2];
-                    final Long time = (Long) objects[3];
-    
-                    this.logger.fine(point + " -> " + dx + ", " + dy);
-                    this.displacementFilter.updateReferencePoint(point, dx, dy, time);
-                }
-                break;
-            case DROP_RECALIBRATION:
-                this.logger.info("Dropping old recalibration info");
-                this.displacementFilter.clearReferencePoints();
-                break;
-            case HARDWARE_CALIBRATION:
-                this.logger.info("Performing a harware calibration");
-                this.usedAdpater.adapterCommand(AdapterCommand.CALIBRATE, new OptionCalibratorNumPoints(5));
-                break;
+        case START:
+            this.usedAdpater.start();
+            break;
+        case STOP:
+            this.usedAdpater.stop();
+            break;
+        case ONLINE_RECALIBRATION:
+            this.logger.info("Performing an internal recalibration");
+            if (!ou.contains(OptionRecalibrationPattern.class)) break;
+
+            final OptionRecalibrationPattern rcp = ou.get(OptionRecalibrationPattern.class);
+            final List<Object[]> points = rcp.getPoints();
+
+            this.displacementFilter.clearReferencePoints();
+
+            for (Object[] objects : points) {
+                if (objects.length != 4) continue;
+
+                final Point point = (Point) objects[0];
+                final Integer dx = (Integer) objects[1];
+                final Integer dy = (Integer) objects[2];
+                final Long time = (Long) objects[3];
+                this.logger.fine(point + " -> " + dx + ", " + dy);
+                this.displacementFilter.updateReferencePoint(point, dx, dy, time);
+            }
+            break;
+        case DROP_RECALIBRATION:
+            this.logger.info("Dropping old recalibration info");
+            this.displacementFilter.clearReferencePoints();
+            break;
+        case HARDWARE_CALIBRATION:
+            this.logger.info("Performing a harware calibration");
+            this.usedAdpater.adapterCommand(AdapterCommand.CALIBRATE, new OptionCalibratorNumPoints(5));
+            break;
         }
     }
 
