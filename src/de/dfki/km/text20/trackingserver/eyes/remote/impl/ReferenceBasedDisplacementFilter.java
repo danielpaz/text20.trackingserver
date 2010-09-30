@@ -48,6 +48,8 @@ public class ReferenceBasedDisplacementFilter {
      * @return .
      */
     Point calcDisplacement(final Point point) {
+        if (point == null) return point;
+
         buildLenBuffer(point);
         final int bufSize = this.lenBuffer.size();
 
@@ -77,6 +79,7 @@ public class ReferenceBasedDisplacementFilter {
      * @return .
      */
     public synchronized Point filterEvent(final Point event) {
+        if (event == null) return event;
         return calcDisplacement(event);
     }
 
@@ -106,6 +109,8 @@ public class ReferenceBasedDisplacementFilter {
                                                   final int xdisplacement,
                                                   final int ydisplacement,
                                                   final long measurementTime) {
+        if (referencePoint == null) return;
+
         // TODO: What to do with the time????
         clearNearestRefPoints(referencePoint);
         this.references.add(new ReferencePoint(referencePoint, xdisplacement, ydisplacement, measurementTime));
@@ -115,6 +120,7 @@ public class ReferenceBasedDisplacementFilter {
      * @param from
      */
     void clearNearestRefPoints(final Point from) {
+        if (from == null) return;
         for (int i = 0; i < this.references.size(); ++i) {
             final ReferencePoint p = this.references.get(i);
             if (p.position.distanceSq(from) < this.radiusSq) {
@@ -127,6 +133,7 @@ public class ReferenceBasedDisplacementFilter {
      * @param point
      */
     final void buildLenBuffer(final Point point) {
+        if (point == null) return;
         this.lenBuffer.clear();
 
         // NOTE: Assume there could be at most  one vector with distance 0 to the point

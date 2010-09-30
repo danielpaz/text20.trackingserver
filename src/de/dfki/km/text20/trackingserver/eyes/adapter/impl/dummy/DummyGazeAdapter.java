@@ -1,5 +1,6 @@
 package de.dfki.km.text20.trackingserver.eyes.adapter.impl.dummy;
 
+import java.awt.Point;
 import java.util.concurrent.BlockingQueue;
 import java.util.logging.Logger;
 
@@ -72,7 +73,11 @@ public class DummyGazeAdapter implements GazeAdapter {
                     final double percentageTime = (time / 2000.0) * Math.PI;
 
                     final double value = Math.sin(percentageTime) * 0.8;
-                    //                    final double value = percentageTime * 0.8;
+                    trackingEvent._centerValidity = true;
+
+                    trackingEvent.centerGaze = new Point(1000, 1000);
+                    trackingEvent.leftGaze = new Point(1000, 1000);
+                    trackingEvent.rightGaze = new Point(1000, 1000);
 
                     trackingEvent.leftEyePos[0] = (float) value;
                     trackingEvent.leftEyePos[1] = (float) value;
@@ -90,6 +95,7 @@ public class DummyGazeAdapter implements GazeAdapter {
                     DummyGazeAdapter.this.queue.add(trackingEvent);
                     try {
                         Thread.sleep(15);
+                        //Thread.sleep(250);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
