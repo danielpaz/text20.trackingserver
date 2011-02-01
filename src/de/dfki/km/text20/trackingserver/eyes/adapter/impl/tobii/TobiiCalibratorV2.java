@@ -3,6 +3,8 @@ package de.dfki.km.text20.trackingserver.eyes.adapter.impl.tobii;
 import java.awt.Color;
 import java.util.logging.Logger;
 
+import net.xeoh.plugins.diagnosis.local.DiagnosisChannel;
+
 import com4j.ComException;
 
 import de.dfki.eyetracker.EyetrackerException;
@@ -50,23 +52,23 @@ public class TobiiCalibratorV2 {
 		return new Color(red, green, blue);
 	}
 
+	DiagnosisChannel<String> log;
 	private int bgColor;
-
-	// private EventCookie evtCalibCookie;
-
 	private ITetCalibProc calib;
 	private TetNumCalibPoints numPoints;
 	private int pointColor;
 	private TetCalibPointSpeed pointSpeed;
 
 	/**
+	 * @param tobiiGazeAdapter 
      * 
      */
-	public TobiiCalibratorV2() {
+	public TobiiCalibratorV2(TobiiGazeAdapter tobiiGazeAdapter) {
 		this.numPoints = TetNumCalibPoints.TetNumCalibPoints_5;
 		this.pointSpeed = TetCalibPointSpeed.TetCalibPointSpeed_Medium;
 		this.pointColor = getBGR(new Color(100, 100, 255));
 		this.bgColor = getBGR(new Color(163, 163, 163));
+		this.log = tobiiGazeAdapter.log;
 	}
 
 	/**

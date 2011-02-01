@@ -2,14 +2,17 @@ package de.dfki.km.text20.trackingserver.eyes.adapter.impl.dummy;
 
 import java.awt.Point;
 import java.util.concurrent.BlockingQueue;
-import java.util.logging.Logger;
 
 import net.xeoh.plugins.base.PluginConfiguration;
 import net.xeoh.plugins.base.annotations.Capabilities;
 import net.xeoh.plugins.base.annotations.PluginImplementation;
+import net.xeoh.plugins.base.annotations.events.Init;
 import net.xeoh.plugins.base.annotations.injections.InjectPlugin;
 import net.xeoh.plugins.base.annotations.meta.Author;
 import net.xeoh.plugins.base.annotations.meta.Version;
+import net.xeoh.plugins.diagnosis.local.Diagnosis;
+import net.xeoh.plugins.diagnosis.local.DiagnosisChannel;
+import de.dfki.km.text20.trackingserver.common.adapter.diagnosis.channels.tracing.CommonAdapterTracer;
 import de.dfki.km.text20.trackingserver.eyes.adapter.AdapterCommand;
 import de.dfki.km.text20.trackingserver.eyes.adapter.GazeAdapter;
 import de.dfki.km.text20.trackingserver.eyes.adapter.options.AdapterCommandOption;
@@ -26,10 +29,10 @@ import de.dfki.km.text20.trackingserver.eyes.remote.TrackingEvent;
 @Version
 @PluginImplementation
 public class DummyGazeAdapter implements GazeAdapter {
-
     /** */
-    final Logger logger = Logger.getLogger(this.getClass().getName());
-
+    @InjectPlugin
+    public Diagnosis diagnosis;
+    
     /** */
     @InjectPlugin
     public PluginConfiguration rawConfiguration;
@@ -39,6 +42,15 @@ public class DummyGazeAdapter implements GazeAdapter {
 
     /** */
     BlockingQueue<TrackingEvent> queue;
+
+    /** Used for tracing */
+    DiagnosisChannel<String> log;
+
+    /** */
+    @Init
+    public void init() {
+        this.log = this.diagnosis.channel(CommonAdapterTracer.class);
+    }
 
     /*
      * (non-Javadoc)
@@ -60,7 +72,7 @@ public class DummyGazeAdapter implements GazeAdapter {
      */
     @Override
     public void start() {
-        DummyGazeAdapter.this.logger.info("Starting tracking.");
+        this.log.status("start/start");
 
         new Thread() {
             @Override
@@ -102,6 +114,8 @@ public class DummyGazeAdapter implements GazeAdapter {
                 }
             }
         }.start();
+        
+        this.log.status("start/end");
     }
 
     /*
