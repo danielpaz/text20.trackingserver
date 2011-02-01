@@ -4,15 +4,19 @@ import java.awt.MouseInfo;
 import java.awt.Point;
 import java.util.Random;
 import java.util.concurrent.BlockingQueue;
-import java.util.logging.Logger;
 
 import net.xeoh.plugins.base.PluginConfiguration;
 import net.xeoh.plugins.base.annotations.Capabilities;
 import net.xeoh.plugins.base.annotations.PluginImplementation;
+import net.xeoh.plugins.base.annotations.events.Init;
 import net.xeoh.plugins.base.annotations.injections.InjectPlugin;
 import net.xeoh.plugins.base.annotations.meta.Author;
 import net.xeoh.plugins.base.annotations.meta.Version;
 import net.xeoh.plugins.base.util.PluginConfigurationUtil;
+import net.xeoh.plugins.diagnosis.local.Diagnosis;
+import net.xeoh.plugins.diagnosis.local.DiagnosisChannel;
+import net.xeoh.plugins.diagnosis.local.options.status.OptionInfo;
+import de.dfki.km.text20.trackingserver.common.adapter.diagnosis.channels.tracing.CommonAdapterTracer;
 import de.dfki.km.text20.trackingserver.eyes.adapter.AdapterCommand;
 import de.dfki.km.text20.trackingserver.eyes.adapter.GazeAdapter;
 import de.dfki.km.text20.trackingserver.eyes.adapter.options.AdapterCommandOption;
@@ -31,21 +35,30 @@ import de.dfki.km.text20.trackingserver.eyes.remote.TrackingEvent;
 public class SimulatingGazeAdapter implements GazeAdapter {
 
     /** */
-    final Logger logger = Logger.getLogger(this.getClass().getName());
-
+    @InjectPlugin
+    public Diagnosis diagnosis;
+    
     /** */
     @InjectPlugin
     public PluginConfiguration rawConfiguration;
 
     /** */
     private TrackingDeviceInformation trackingDeviceInfo;
-
-    /** */
-    BlockingQueue<TrackingEvent> queue;
-
     /** */
     final Random r = new Random();
 
+    /** */
+    BlockingQueue<TrackingEvent> queue;
+    
+    /** Used for tracing */
+    DiagnosisChannel<String> log;
+
+    /** */
+    @Init
+    public void init() {
+        this.log = this.diagnosis.channel(CommonAdapterTracer.class);
+    }
+    
     /*
      * (non-Javadoc)
      * 
@@ -60,6 +73,8 @@ public class SimulatingGazeAdapter implements GazeAdapter {
         this.trackingDeviceInfo.hardwareID = "simulator/v0";
         this.trackingDeviceInfo.trackingDeviceManufacturer = "Text 2.0 Project";
 
+        this.log.status("setup/call", new OptionInfo("name", this.trackingDeviceInfo.deviceName));
+        
         this.queue = eventQueue;
     }
 
@@ -71,7 +86,7 @@ public class SimulatingGazeAdapter implements GazeAdapter {
     @Override
     @SuppressWarnings("boxing")
     public void start() {
-        SimulatingGazeAdapter.this.logger.info("Starting tracking.");
+        this.log.status("start/start");
 
         final PluginConfigurationUtil pcu = new PluginConfigurationUtil(this.rawConfiguration);
 
@@ -93,7 +108,7 @@ public class SimulatingGazeAdapter implements GazeAdapter {
             @SuppressWarnings("unqualified-field-access")
             @Override
             public void run() {
-
+                log.status("start/thread/run");
                 while (true) {
 
                     // Returns the base location on screen
@@ -150,6 +165,7 @@ public class SimulatingGazeAdapter implements GazeAdapter {
                 }
             }
         }.start();
+        this.log.status("start/end");        
     }
 
     /*
@@ -159,7 +175,7 @@ public class SimulatingGazeAdapter implements GazeAdapter {
      */
     @Override
     public void stop() {
-        // TODO
+        this.log.status("stop/call");
     }
 
     /*
@@ -186,6 +202,6 @@ public class SimulatingGazeAdapter implements GazeAdapter {
      */
     @Override
     public void adapterCommand(AdapterCommand command, AdapterCommandOption... options) {
-        //
+        this.log.status("adaptercommand/call", new OptionInfo("command", command.toString()));
     }
 }

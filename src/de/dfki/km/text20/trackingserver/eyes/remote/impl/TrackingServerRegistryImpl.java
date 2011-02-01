@@ -30,6 +30,7 @@ import net.xeoh.plugins.base.annotations.Capabilities;
 import net.xeoh.plugins.base.annotations.PluginImplementation;
 import net.xeoh.plugins.base.annotations.Thread;
 import net.xeoh.plugins.base.util.OptionUtils;
+import net.xeoh.plugins.diagnosis.local.options.status.OptionInfo;
 import de.dfki.km.text20.trackingserver.common.remote.impl.CommonServerRegistry;
 import de.dfki.km.text20.trackingserver.eyes.adapter.AdapterCommand;
 import de.dfki.km.text20.trackingserver.eyes.adapter.GazeAdapter;
@@ -55,19 +56,11 @@ public class TrackingServerRegistryImpl
     /** */
     ReferenceBasedDisplacementFilter displacementFilter = new ReferenceBasedDisplacementFilter();
 
-    /*
-        @Override
-        public void addTrackingListener(TrackingClientCallback callback) {
-            System.out.println("ADDDDEDEDEDE");
-            // TODO Auto-generated method stub
-            super.addTrackingListener(callback);
-        }
-
-    */
     /** */
     @Override
     @Thread(isDaemonic = false)
     public void senderThread() {
+        this.log.status("sender/start");
 
         int numMisdetected = 0;
 
@@ -78,66 +71,49 @@ public class TrackingServerRegistryImpl
 
                 // Don't warn if we haven't received any event yet.
                 if (latestEvent == null && this.numEventsReceived > 0) {
-                    this.logger.warning("No tracking events anymore after event " + this.numEventsReceived + ".");
+                    this.log.status("sender/polltimeout/stalled", new OptionInfo("alreadyreceived", "" + this.numEventsReceived), new OptionInfo("misdetected", "" + numMisdetected));
+
                     numMisdetected++;
 
                     // Check for emergency restart.
                     if (numMisdetected > 0 && numMisdetected % 6 == 0) {
-                        this.logger.warning("Performing emergency restart of tracking device.");
-                        this.logger.warning("Calling stop()");
+                        this.log.status("sender/polltimeout/emergencystop", new OptionInfo("alreadyreceived", "" + this.numEventsReceived), new OptionInfo("misdetected", "" + numMisdetected));                        
                         this.usedAdpater.stop();
-                        this.logger.warning("Calling start()");
+                        this.log.status("sender/polltimeout/emergencystart", new OptionInfo("alreadyreceived", "" + this.numEventsReceived), new OptionInfo("misdetected", "" + numMisdetected));                        
                         this.usedAdpater.start();
-                        this.logger.warning("Device restarted. Cross your fingers.");
                     }
 
                     continue;
                 }
+                
+                // In case the first event was null
+                if(latestEvent == null) {
+                    this.log.status("sender/polltimeout/nodata");
+                    continue;
+                }
+                
                 // Increase number of successful events
                 this.numEventsReceived++;
 
-                // Output something if we are running fine ...
-                if (this.numEventsReceived == 100) {
-                    this.logger.info("Received a number of events. Should be running fine.");
-                }
-
-                // ... and output something regularly to check we are still running fine.
-                if (this.numEventsReceived % 1000 == 0) {
-                    this.logger.fine("Still running. Tracking event : " + latestEvent);
-                }
-
-                if (latestEvent != null) {
-                    final StringBuilder sb = new StringBuilder();
-                    sb.append("L ");
-                    sb.append(latestEvent.centerGaze);
-                    sb.append(" ");
-                    sb.append(latestEvent.leftGaze);
-                    sb.append(" ");
-                    sb.append(latestEvent.rightGaze);
-                    sb.append(" ");
-                    sb.append(latestEvent._centerX);
-                    sb.append(" ");
-                    sb.append(latestEvent._centerY);
-                    this.logger.finer(sb.toString());
-                }
-
+                
                 // Filter events
                 final TrackingEvent filteredEvent = filterEvent(latestEvent);
+                
+                
+                // Output something if we are running fine ...
+                if (this.numEventsReceived % 300 == 0 && this.numEventsReceived > 0) {
+                    String gaze = "";
+                    String filtered = "";
+                    
+                    if(latestEvent.centerGaze != null) {
+                        gaze = latestEvent.centerGaze.x + "/" + latestEvent.centerGaze.y;
+                        filtered = filteredEvent.centerGaze.x + "/" + filteredEvent.centerGaze.y;
 
-                if (filteredEvent != null) {
-                    final StringBuilder sb = new StringBuilder();
-                    sb.append("L ");
-                    sb.append(filteredEvent.centerGaze);
-                    sb.append(" ");
-                    sb.append(filteredEvent.leftGaze);
-                    sb.append(" ");
-                    sb.append(filteredEvent.rightGaze);
-                    sb.append(" ");
-                    sb.append(filteredEvent._centerX);
-                    sb.append(" ");
-                    sb.append(filteredEvent._centerY);
-                    this.logger.finer(sb.toString());
+                    }
+                    
+                    this.log.status("sender/receivedsome",  new OptionInfo("alreadyreceived", "" + this.numEventsReceived), new OptionInfo("gazepos", gaze), new OptionInfo("filteredpos", filtered));                    
                 }
+
 
                 // Send evens to listener
                 this.callbacksLock.lock();
@@ -149,7 +125,7 @@ public class TrackingServerRegistryImpl
                     this.callbacksLock.unlock();
                 }
             } catch (InterruptedException e) {
-                System.out.println("Error waiting for some result ...");
+                this.log.status("sender/exception/interrupted", new OptionInfo("message", e.getMessage()),  new OptionInfo("alreadyreceived", "" + this.numEventsReceived));                             
             }
         }
     }
@@ -183,7 +159,8 @@ public class TrackingServerRegistryImpl
     @Override
     @SuppressWarnings("boxing")
     public void sendCommand(TrackingCommand command, SendCommandOption... options) {
-        this.logger.fine("Received command " + command);
+        this.log.status("sendcommand/command", new OptionInfo("command", command.toString()));
+        
         if (this.usedAdpater == null) return;
 
         // Process our options
@@ -197,7 +174,6 @@ public class TrackingServerRegistryImpl
             this.usedAdpater.stop();
             break;
         case ONLINE_RECALIBRATION:
-            this.logger.info("Performing an internal recalibration");
             if (!ou.contains(OptionRecalibrationPattern.class)) break;
 
             final OptionRecalibrationPattern rcp = ou.get(OptionRecalibrationPattern.class);
@@ -212,16 +188,13 @@ public class TrackingServerRegistryImpl
                 final Integer dx = (Integer) objects[1];
                 final Integer dy = (Integer) objects[2];
                 final Long time = (Long) objects[3];
-                this.logger.fine(point + " -> " + dx + ", " + dy);
                 this.displacementFilter.updateReferencePoint(point, dx, dy, time);
             }
             break;
         case DROP_RECALIBRATION:
-            this.logger.info("Dropping old recalibration info");
             this.displacementFilter.clearReferencePoints();
             break;
         case HARDWARE_CALIBRATION:
-            this.logger.info("Performing a harware calibration");
             this.usedAdpater.adapterCommand(AdapterCommand.CALIBRATE, new OptionCalibratorNumPoints(5));
             break;
         }

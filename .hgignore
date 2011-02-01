@@ -9,3 +9,5 @@ syntax: regexp
 ^dist$
 syntax: regexp
 ^jspf\.plugin\.cache$
+syntax: regexp
+^diagnosis\.record$
