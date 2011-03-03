@@ -108,7 +108,6 @@ public class TrackingServerRegistryImpl
                     if(latestEvent.centerGaze != null) {
                         gaze = latestEvent.centerGaze.x + "/" + latestEvent.centerGaze.y;
                         filtered = filteredEvent.centerGaze.x + "/" + filteredEvent.centerGaze.y;
-
                     }
                     
                     this.log.status("sender/receivedsome",  new OptionInfo("alreadyreceived", "" + this.numEventsReceived), new OptionInfo("gazepos", gaze), new OptionInfo("filteredpos", filtered));                    
