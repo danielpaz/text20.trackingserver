@@ -33,6 +33,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.UnknownHostException;
 
+import javax.swing.UIManager;
+
 import net.xeoh.plugins.base.PluginManager;
 import net.xeoh.plugins.base.impl.PluginManagerFactory;
 import net.xeoh.plugins.base.util.JSPFProperties;
@@ -54,6 +56,15 @@ public class Launcher {
                                           UnknownHostException, URISyntaxException,
                                           FileNotFoundException {
 
+
+        // Set global look and feel. 
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception ex) {
+            System.out.println("Unable to load native look and feel");
+        }
+
+        
         // The first thing we do is to redirect std out / std err (Fixed #10)
         if ($(args).filter("-noredirect").size() == 0) {
             System.setOut(new PrintStream("output.log"));
