@@ -152,6 +152,19 @@ public class CommonServerRegistry<T extends CommonTrackingEvent, C extends Commo
                         callback.newTrackingEvent(event);
                     } catch (Exception e) {
                         e.printStackTrace();
+                        
+                        // In that case, we terminate this pump
+                        if(e instanceof IllegalStateException) {
+                            // And remove the queue from the callbacks list
+                            CommonServerRegistry.this.callbacksLock.lock();
+                            try {
+                                CommonServerRegistry.this.callbacks.add(queue);
+                            } finally {
+                                CommonServerRegistry.this.callbacksLock.unlock();
+                            }   
+                            
+                            return;
+                        }
                     }
                 }
             }
@@ -221,6 +234,7 @@ public class CommonServerRegistry<T extends CommonTrackingEvent, C extends Commo
                 this.callbacksLock.lock();
                 try {
                     for (BlockingQueue<T> queue : this.callbacks) {
+                        // Offer the event
                         queue.offer(latestEvent);
                     }
                 } finally {
