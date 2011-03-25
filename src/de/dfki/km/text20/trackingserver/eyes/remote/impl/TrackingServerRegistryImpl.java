@@ -31,6 +31,7 @@ import net.xeoh.plugins.base.annotations.PluginImplementation;
 import net.xeoh.plugins.base.annotations.Thread;
 import net.xeoh.plugins.base.util.OptionUtils;
 import net.xeoh.plugins.diagnosis.local.options.status.OptionInfo;
+import de.dfki.km.text20.trackingserver.common.remote.diagnosis.channels.tracing.CommonRegistryTracer;
 import de.dfki.km.text20.trackingserver.common.remote.impl.CommonServerRegistry;
 import de.dfki.km.text20.trackingserver.eyes.adapter.AdapterCommand;
 import de.dfki.km.text20.trackingserver.eyes.adapter.GazeAdapter;
@@ -40,6 +41,8 @@ import de.dfki.km.text20.trackingserver.eyes.remote.TrackingCommand;
 import de.dfki.km.text20.trackingserver.eyes.remote.TrackingDeviceInformation;
 import de.dfki.km.text20.trackingserver.eyes.remote.TrackingEvent;
 import de.dfki.km.text20.trackingserver.eyes.remote.TrackingServerRegistry;
+import de.dfki.km.text20.trackingserver.eyes.remote.diagnosis.channel.status.DispatchingStatus;
+import de.dfki.km.text20.trackingserver.eyes.remote.diagnosis.channel.status.ReceivingEvents;
 import de.dfki.km.text20.trackingserver.eyes.remote.options.SendCommandOption;
 import de.dfki.km.text20.trackingserver.eyes.remote.options.sendcommand.OptionRecalibrationPattern;
 
@@ -60,7 +63,8 @@ public class TrackingServerRegistryImpl
     @Override
     @Thread(isDaemonic = false)
     public void senderThread() {
-        this.log.status("sender/start");
+        this.diagnosis.channel(CommonRegistryTracer.class).status("sender/start");
+        this.diagnosis.channel(DispatchingStatus.class).status(Boolean.TRUE);
 
         int numMisdetected = 0;
 
@@ -71,28 +75,31 @@ public class TrackingServerRegistryImpl
 
                 // Don't warn if we haven't received any event yet.
                 if (latestEvent == null && this.numEventsReceived > 0) {
-                    this.log.status("sender/polltimeout/stalled", new OptionInfo("alreadyreceived", "" + this.numEventsReceived), new OptionInfo("misdetected", "" + numMisdetected));
+                    this.diagnosis.channel(CommonRegistryTracer.class).status("sender/polltimeout/stalled", new OptionInfo("alreadyreceived", "" + this.numEventsReceived), new OptionInfo("misdetected", "" + numMisdetected));
 
                     numMisdetected++;
 
                     // Check for emergency restart.
                     if (numMisdetected > 0 && numMisdetected % 6 == 0) {
-                        this.log.status("sender/polltimeout/emergencystop", new OptionInfo("alreadyreceived", "" + this.numEventsReceived), new OptionInfo("misdetected", "" + numMisdetected));                        
+                        this.diagnosis.channel(CommonRegistryTracer.class).status("sender/polltimeout/emergencystop", new OptionInfo("alreadyreceived", "" + this.numEventsReceived), new OptionInfo("misdetected", "" + numMisdetected));                        
                         this.usedAdpater.stop();
-                        this.log.status("sender/polltimeout/emergencystart", new OptionInfo("alreadyreceived", "" + this.numEventsReceived), new OptionInfo("misdetected", "" + numMisdetected));                        
+                        this.diagnosis.channel(CommonRegistryTracer.class).status("sender/polltimeout/emergencystart", new OptionInfo("alreadyreceived", "" + this.numEventsReceived), new OptionInfo("misdetected", "" + numMisdetected));                        
                         this.usedAdpater.start();
                     }
 
+                    this.diagnosis.channel(ReceivingEvents.class).status(Boolean.FALSE);
                     continue;
                 }
                 
                 // In case the first event was null
                 if(latestEvent == null) {
-                    this.log.status("sender/polltimeout/nodata");
+                    this.diagnosis.channel(ReceivingEvents.class).status(Boolean.FALSE);
+                    this.diagnosis.channel(CommonRegistryTracer.class).status("sender/polltimeout/nodata");
                     continue;
                 }
                 
                 // Increase number of successful events
+                this.diagnosis.channel(ReceivingEvents.class).status(Boolean.TRUE);                
                 this.numEventsReceived++;
 
                 
@@ -110,7 +117,7 @@ public class TrackingServerRegistryImpl
                         filtered = filteredEvent.centerGaze.x + "/" + filteredEvent.centerGaze.y;
                     }
                     
-                    this.log.status("sender/receivedsome",  new OptionInfo("alreadyreceived", "" + this.numEventsReceived), new OptionInfo("gazepos", gaze), new OptionInfo("filteredpos", filtered));                    
+                    this.diagnosis.channel(CommonRegistryTracer.class).status("sender/receivedsome",  new OptionInfo("alreadyreceived", "" + this.numEventsReceived), new OptionInfo("gazepos", gaze), new OptionInfo("filteredpos", filtered));                    
                 }
 
 
@@ -124,7 +131,7 @@ public class TrackingServerRegistryImpl
                     this.callbacksLock.unlock();
                 }
             } catch (InterruptedException e) {
-                this.log.status("sender/exception/interrupted", new OptionInfo("message", e.getMessage()),  new OptionInfo("alreadyreceived", "" + this.numEventsReceived));                             
+                this.diagnosis.channel(CommonRegistryTracer.class).status("sender/exception/interrupted", new OptionInfo("message", e.getMessage()),  new OptionInfo("alreadyreceived", "" + this.numEventsReceived));                             
             }
         }
     }
@@ -158,7 +165,7 @@ public class TrackingServerRegistryImpl
     @Override
     @SuppressWarnings("boxing")
     public void sendCommand(TrackingCommand command, SendCommandOption... options) {
-        this.log.status("sendcommand/command", new OptionInfo("command", command.toString()));
+        this.diagnosis.channel(CommonRegistryTracer.class).status("sendcommand/command", new OptionInfo("command", command.toString()));
         
         if (this.usedAdpater == null) return;
 

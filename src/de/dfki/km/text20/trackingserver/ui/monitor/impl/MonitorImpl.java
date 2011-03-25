@@ -27,15 +27,34 @@
  */
 package de.dfki.km.text20.trackingserver.ui.monitor.impl;
 
+import static net.jcores.CoreKeeper.$;
+
 import java.awt.AWTException;
+import java.awt.BorderLayout;
+import java.awt.Container;
 import java.awt.Image;
 import java.awt.SystemTray;
 import java.awt.Toolkit;
 import java.awt.TrayIcon;
-import java.awt.TrayIcon.MessageType;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+import javax.swing.JFrame;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 
 import net.xeoh.plugins.base.annotations.PluginImplementation;
 import net.xeoh.plugins.base.annotations.events.Init;
+import net.xeoh.plugins.base.annotations.injections.InjectPlugin;
+import net.xeoh.plugins.diagnosis.local.Diagnosis;
+import net.xeoh.plugins.diagnosis.local.util.DiagnosisUtil;
+import net.xeoh.plugins.diagnosis.local.util.conditions.TwoStateMatcherAND;
+import net.xeoh.plugins.diagnosis.local.util.conditions.matcher.Is;
+import de.dfki.km.text20.trackingserver.eyes.remote.diagnosis.channel.status.ReceivingEvents;
 import de.dfki.km.text20.trackingserver.ui.monitor.Monitor;
 
 /**
@@ -43,28 +62,128 @@ import de.dfki.km.text20.trackingserver.ui.monitor.Monitor;
  */
 @PluginImplementation
 public class MonitorImpl implements Monitor {
+    /** Needed to monitor our status */
+    @InjectPlugin
+    public Diagnosis diagnosis;
+    
     /** Current tray icon */
-    private TrayIcon trayIcon;
+    TrayIcon trayIcon;
 
     /** Current system tray */
-    private SystemTray systemTray;
+    SystemTray systemTray;
+    
+    /** Our three images (bad, uncertain, good) */
+    final Image images[] = new Image[3];
+    
+    /** Messages to keep */
+    final List<String> messages = new ArrayList<String>();
+    
+    /** Joined status of all sub-modules. */
+    final Map<String, Integer> joinedStatus = new ConcurrentHashMap<String, Integer>();
+    
     
     /** Create GUI and other components */
     @Init
     public void init() {
         // Check if we might have a system tray
         if (!SystemTray.isSupported()) return;
+        
+        this.images[0] = Toolkit.getDefaultToolkit().getImage(MonitorImpl.class.getResource("win.bad.gif"));
+        this.images[1] = Toolkit.getDefaultToolkit().getImage(MonitorImpl.class.getResource("win.uncertain.gif"));
+        this.images[2] = Toolkit.getDefaultToolkit().getImage(MonitorImpl.class.getResource("win.good.gif"));
+        
 
+        // Start in uncertain mode ...
         try {
             // Load and start tray + icon
-            final Image image = Toolkit.getDefaultToolkit().getImage(MonitorImpl.class.getResource("TrayIconInactive.gif"));
-            this.trayIcon = new TrayIcon(image, "Tracking Server");
+            this.trayIcon = new TrayIcon(this.images[1], "Tracking Server");
+            this.trayIcon.addMouseListener(new MouseListener() {
+                
+                @Override
+                public void mouseReleased(MouseEvent e) {
+                    // TODO Auto-generated method stub
+                    
+                }
+                
+                @SuppressWarnings("static-access")
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    final JFrame frame = new JFrame();
+                    final Container contentPane = frame.getContentPane();
+                    final JTextArea textArea = new JTextArea();
+                    
+                    textArea.setEditable(false);
+                    textArea.setText($(MonitorImpl.this.messages).string().join("\n"));
+                    
+                    contentPane.setLayout(new BorderLayout());
+                    contentPane.add(new JScrollPane(textArea), BorderLayout.CENTER);
+                    
+                    frame.setTitle("Text 2.0 Tracking Diagnosis Log");
+                    frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                    frame.setSize(400, 600);
+                    frame.setVisible(true);
+                }
+                
+                @Override
+                public void mouseExited(MouseEvent e) {
+                    // TODO Auto-generated method stub
+                    
+                }
+                
+                @Override
+                public void mouseEntered(MouseEvent e) {
+                    // TODO Auto-generated method stub
+                    
+                }
+                
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                }
+            });
+            
             this.systemTray = SystemTray.getSystemTray();
             this.systemTray.add(this.trayIcon);
             
-            this.trayIcon.displayMessage("X", "Y", MessageType.ERROR);
+            message("Starting up Text 2.0 Tracking Server...");
         } catch (AWTException e) {
             e.printStackTrace();
         }
+        
+        registerConditions();
     }
+    
+    
+    private void registerConditions() {
+        // We register a new monitor for each condition we like to observe.
+        final DiagnosisUtil util = new DiagnosisUtil(this.diagnosis);
+        
+        // Startup Monitor (become ON after startup is complete)
+        util.registerCondition(new TwoStateMatcherAND() {
+            @Override
+            protected void setupMatcher() {
+                match(ReceivingEvents.class, new Is(Boolean.TRUE));
+            }
+            
+            @Override
+            public void stateChanged(STATE arg0) {
+                MonitorImpl.this.trayIcon.setImage(arg0 == STATE.ON ? MonitorImpl.this.images[2] : MonitorImpl.this.images[0]);
+                message(arg0 == STATE.ON ? "Receiving Events" : "Error receiving events");
+            }
+        });
+    }
+
+
+    /**
+     * Adds a message to our log and the image tooltip
+     * 
+     * @param message Message to add
+     */
+    public void message(String message) {
+        this.trayIcon.setToolTip(message);
+        
+        synchronized (this.messages) {
+            this.messages.add(System.currentTimeMillis() + ": " + message);
+            if(this.messages.size() > 50) this.messages.remove(0);
+        }
+    } 
 }

@@ -43,7 +43,6 @@ import net.xeoh.plugins.base.annotations.events.PluginLoaded;
 import net.xeoh.plugins.base.annotations.injections.InjectPlugin;
 import net.xeoh.plugins.base.util.PluginConfigurationUtil;
 import net.xeoh.plugins.diagnosis.local.Diagnosis;
-import net.xeoh.plugins.diagnosis.local.DiagnosisChannel;
 import net.xeoh.plugins.diagnosis.local.options.status.OptionInfo;
 import net.xeoh.plugins.remote.ExportResult;
 import net.xeoh.plugins.remote.RemoteAPILipe;
@@ -104,10 +103,6 @@ public class CommonServerRegistry<T extends CommonTrackingEvent, C extends Commo
     /** Adapter used */
     protected A usedAdpater;
 
-    /** Used for tracing */
-    protected DiagnosisChannel<String> log;
-    
-
     /** */
     @Init
     public void init() {
@@ -115,8 +110,7 @@ public class CommonServerRegistry<T extends CommonTrackingEvent, C extends Commo
         this.adapterID = pcu.getString(getClass(), "adapter.id");
         
         // Debug the used adapter.
-        this.log = this.diagnosis.channel(CommonRegistryTracer.class);
-        this.log.status("init/call", new OptionInfo("adapter", this.adapterID)); 
+        this.diagnosis.channel(CommonRegistryTracer.class).status("init/call", new OptionInfo("adapter", this.adapterID)); 
 
         // Export the plugin
         final ExportResult exportResult = this.remoteAPILipe.exportPlugin(this);
@@ -124,7 +118,7 @@ public class CommonServerRegistry<T extends CommonTrackingEvent, C extends Commo
 
         // Log to console ... might be useful ...
         for (URI uri : exportURIs) {
-            this.log.status("init/export", new OptionInfo("uri", uri));             
+            this.diagnosis.channel(CommonRegistryTracer.class).status("init/export", new OptionInfo("uri", uri));             
         }
     }
 
@@ -204,7 +198,7 @@ public class CommonServerRegistry<T extends CommonTrackingEvent, C extends Commo
      * @param adapter
      */
     private void setupAdapter(A adapter) {
-        this.log.status("setup/adapter", new OptionInfo("adapter", adapter.toString()));             
+        this.diagnosis.channel(CommonRegistryTracer.class).status("setup/adapter", new OptionInfo("adapter", adapter.toString()));             
         this.usedAdpater = adapter;
         this.usedAdpater.setup(this.events);
         this.usedAdpater.start();
@@ -213,7 +207,7 @@ public class CommonServerRegistry<T extends CommonTrackingEvent, C extends Commo
     /** */
     @Thread(isDaemonic = false)
     public void senderThread() {
-        this.log.status("sender/start");
+        this.diagnosis.channel(CommonRegistryTracer.class).status("sender/start");
         
         while (true) {
             try {
@@ -221,13 +215,13 @@ public class CommonServerRegistry<T extends CommonTrackingEvent, C extends Commo
                 final T latestEvent = this.events.poll(500, TimeUnit.MILLISECONDS);
 
                 if (latestEvent == null) {
-                    this.log.status("sender/polltimeout", new OptionInfo("alreadyreceived", "" + this.numEventsReceived));
+                    this.diagnosis.channel(CommonRegistryTracer.class).status("sender/polltimeout", new OptionInfo("alreadyreceived", "" + this.numEventsReceived));
                     continue;
                 }
 
                 // Increase number of successful events
                 if(this.numEventsReceived++ % 300 == 0) {
-                    this.log.status("sender/receivedsome",  new OptionInfo("alreadyreceived", "" + this.numEventsReceived));
+                    this.diagnosis.channel(CommonRegistryTracer.class).status("sender/receivedsome",  new OptionInfo("alreadyreceived", "" + this.numEventsReceived));
                 }
 
                 // Send evens to listener
@@ -241,7 +235,7 @@ public class CommonServerRegistry<T extends CommonTrackingEvent, C extends Commo
                     this.callbacksLock.unlock();
                 }
             } catch (InterruptedException e) {
-                this.log.status("sender/exception/interrupted", new OptionInfo("message", e.getMessage()),  new OptionInfo("alreadyreceived", "" + this.numEventsReceived));                             
+                this.diagnosis.channel(CommonRegistryTracer.class).status("sender/exception/interrupted", new OptionInfo("message", e.getMessage()),  new OptionInfo("alreadyreceived", "" + this.numEventsReceived));                             
             }
         }
     }
@@ -255,7 +249,7 @@ public class CommonServerRegistry<T extends CommonTrackingEvent, C extends Commo
      */
     @Override
     public I getTrackingDeviceInformation() {
-        this.log.status("deviceinfo/requested");
+        this.diagnosis.channel(CommonRegistryTracer.class).status("deviceinfo/requested");
         
         if (this.usedAdpater == null) return null;
         return this.usedAdpater.getDeviceInformation();
