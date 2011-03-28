@@ -60,7 +60,7 @@ public class BrainAdapterImpl implements BrainAdapter {
     /**
      * Retrieves the events from the brain tracker
      */
-    @Timer(period = 50)
+    @Timer(period = 250)
     public void pollChannels() {
         TrackingEvent t = new TrackingEvent();
         t.channels.put("channel:furrow", new Double(0.3));
