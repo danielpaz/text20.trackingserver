@@ -36,6 +36,7 @@ import java.awt.Image;
 import java.awt.SystemTray;
 import java.awt.Toolkit;
 import java.awt.TrayIcon;
+import java.awt.TrayIcon.MessageType;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
@@ -144,12 +145,26 @@ public class MonitorImpl implements Monitor {
             this.systemTray = SystemTray.getSystemTray();
             this.systemTray.add(this.trayIcon);
             
+       
             message("Starting up Text 2.0 Tracking Server...");
         } catch (AWTException e) {
             e.printStackTrace();
         }
         
         registerConditions();
+    }
+    
+    
+    /**
+     * Depending on the platform, display a message to the user.
+     * 
+     * @param title
+     * @param text
+     * @param type
+     */
+    void userNotify(String title, String text, MessageType type) {
+        if(!$(System.getProperty("os.name")).get("UNDEFINED").toLowerCase().contains("win") || this.trayIcon == null) return;
+        this.trayIcon.displayMessage(title, text, type);
     }
     
     
@@ -168,6 +183,11 @@ public class MonitorImpl implements Monitor {
             public void stateChanged(STATE arg0) {
                 MonitorImpl.this.trayIcon.setImage(arg0 == STATE.ON ? MonitorImpl.this.images[2] : MonitorImpl.this.images[0]);
                 message(arg0 == STATE.ON ? "Receiving Events" : "Error receiving events");
+                
+                // In case things go wrong
+                if(arg0 == STATE.OFF) {
+                    userNotify("Tracking Server", "Due to an error the eye tracking processing stopped. Please see the logs for details.", MessageType.ERROR);
+                }
             }
         });
     }

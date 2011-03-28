@@ -53,44 +53,16 @@ public class SimulatingGazeAdapter implements GazeAdapter {
     /** Used for tracing */
     DiagnosisChannel<String> log;
 
+    private Thread thread;
+
     /** */
     @Init
-    public void init() {
-        this.log = this.diagnosis.channel(CommonAdapterTracer.class);
-    }
-    
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * de.dfki.km.augmentedtext.trackingserver.adapter.GazeAdapter#setup(java
-     * .util.concurrent.BlockingQueue)
-     */
-    @Override
-    public void setup(BlockingQueue<TrackingEvent> eventQueue) {
-        this.trackingDeviceInfo = new TrackingDeviceInformation();
-        this.trackingDeviceInfo.deviceName = "Simulator";
-        this.trackingDeviceInfo.hardwareID = "simulator/v0";
-        this.trackingDeviceInfo.trackingDeviceManufacturer = "Text 2.0 Project";
-
-        this.log.status("setup/call", new OptionInfo("name", this.trackingDeviceInfo.deviceName));
-        
-        this.queue = eventQueue;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see de.dfki.km.augmentedtext.trackingserver.adapter.GazeAdapter#start()
-     */
-    @Override
     @SuppressWarnings("boxing")
-    public void start() {
-        this.log.status("start/start");
-
+    public void init() {
         final PluginConfigurationUtil pcu = new PluginConfigurationUtil(this.rawConfiguration);
-
-        new Thread() {
+        
+        this.log = this.diagnosis.channel(CommonAdapterTracer.class);
+        this.thread = new Thread() {
 
             final int baseValue = pcu.getInt(SimulatingGazeAdapter.class, "fixation.duration.base", 150);
             final int variableValue = pcu.getInt(SimulatingGazeAdapter.class, "fixation.duration.variable", 500);
@@ -161,10 +133,42 @@ public class SimulatingGazeAdapter implements GazeAdapter {
                         Thread.sleep(this.sleepValue);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
+                        return;
                     }
                 }
             }
-        }.start();
+        };
+    }
+    
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * de.dfki.km.augmentedtext.trackingserver.adapter.GazeAdapter#setup(java
+     * .util.concurrent.BlockingQueue)
+     */
+    @Override
+    public void setup(BlockingQueue<TrackingEvent> eventQueue) {
+        this.trackingDeviceInfo = new TrackingDeviceInformation();
+        this.trackingDeviceInfo.deviceName = "Simulator";
+        this.trackingDeviceInfo.hardwareID = "simulator/v0";
+        this.trackingDeviceInfo.trackingDeviceManufacturer = "Text 2.0 Project";
+
+        this.log.status("setup/call", new OptionInfo("name", this.trackingDeviceInfo.deviceName));
+        
+        this.queue = eventQueue;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see de.dfki.km.augmentedtext.trackingserver.adapter.GazeAdapter#start()
+     */
+    @Override
+    public void start() {
+        this.log.status("start/start");
+
+        this.thread.start();
         this.log.status("start/end");        
     }
 
@@ -176,6 +180,7 @@ public class SimulatingGazeAdapter implements GazeAdapter {
     @Override
     public void stop() {
         this.log.status("stop/call");
+        this.thread.interrupt();
     }
 
     /*

@@ -71,8 +71,9 @@ public class TrackingServerRegistryImpl
         while (true) {
             try {
                 // Try to get the lastest event
-                final TrackingEvent latestEvent = this.events.poll(500, TimeUnit.MILLISECONDS);
-
+                TrackingEvent latestEvent = this.events.poll(500, TimeUnit.MILLISECONDS);
+                
+                
                 // Don't warn if we haven't received any event yet.
                 if (latestEvent == null && this.numEventsReceived > 0) {
                     this.diagnosis.channel(CommonRegistryTracer.class).status("sender/polltimeout/stalled", new OptionInfo("alreadyreceived", "" + this.numEventsReceived), new OptionInfo("misdetected", "" + numMisdetected));

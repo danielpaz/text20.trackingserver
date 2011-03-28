@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
 
 <!-- General project description -->
-<project name="ATServer" default="all">
+<project name="TrackingServer" default="all">
 
 	<!-- Define different global variables -->
 	<property name="prefix" value="trackingserver" />
-	<property name="version" value="0.1.0" />
+	<property name="version" value="1.0.0" />
 
 	<!-- Define different roots -->
 	<property name="build.root" value="ant.build/" />
@@ -37,6 +37,10 @@
 				</fileset>
 			</classpath>
 		</javac>
+        
+        <copy file="src/de/dfki/km/text20/trackingserver/ui/monitor/impl/win.bad.gif" tofile="${build.root}/${prefix}/de/dfki/km/text20/trackingserver/ui/monitor/impl/win.bad.gif" />
+        <copy file="src/de/dfki/km/text20/trackingserver/ui/monitor/impl/win.good.gif" tofile="${build.root}/${prefix}/de/dfki/km/text20/trackingserver/ui/monitor/impl/win.good.gif" />
+        <copy file="src/de/dfki/km/text20/trackingserver/ui/monitor/impl/win.uncertain.gif" tofile="${build.root}/${prefix}/de/dfki/km/text20/trackingserver/ui/monitor/impl/win.uncertain.gif" />
 	</target>
 
 
