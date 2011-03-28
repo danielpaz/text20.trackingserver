@@ -67,6 +67,7 @@ public class TrackingServerRegistryImpl
         this.diagnosis.channel(DispatchingStatus.class).status(Boolean.TRUE);
 
         int numMisdetected = 0;
+        int numConsecutiveMisdetected = 0;
 
         while (true) {
             try {
@@ -79,16 +80,22 @@ public class TrackingServerRegistryImpl
                     this.diagnosis.channel(CommonRegistryTracer.class).status("sender/polltimeout/stalled", new OptionInfo("alreadyreceived", "" + this.numEventsReceived), new OptionInfo("misdetected", "" + numMisdetected));
 
                     numMisdetected++;
+                    numConsecutiveMisdetected++;
 
+                    // It appears that sometimes (once every few minutes) we don't receive any
+                    // event from the Tobii adapter. In that case, don't warn instantly, but rather 
+                    // give the interface a few tries
+                    if(numConsecutiveMisdetected >= 3) {
+                        this.diagnosis.channel(ReceivingEvents.class).status(Boolean.FALSE);
+                    }
+                    
                     // Check for emergency restart.
-                    if (numMisdetected > 0 && numMisdetected % 6 == 0) {
+                    if (numConsecutiveMisdetected >= 6) {
                         this.diagnosis.channel(CommonRegistryTracer.class).status("sender/polltimeout/emergencystop", new OptionInfo("alreadyreceived", "" + this.numEventsReceived), new OptionInfo("misdetected", "" + numMisdetected));                        
                         this.usedAdpater.stop();
                         this.diagnosis.channel(CommonRegistryTracer.class).status("sender/polltimeout/emergencystart", new OptionInfo("alreadyreceived", "" + this.numEventsReceived), new OptionInfo("misdetected", "" + numMisdetected));                        
                         this.usedAdpater.start();
                     }
-
-                    this.diagnosis.channel(ReceivingEvents.class).status(Boolean.FALSE);
                     continue;
                 }
                 
@@ -102,6 +109,7 @@ public class TrackingServerRegistryImpl
                 // Increase number of successful events
                 this.diagnosis.channel(ReceivingEvents.class).status(Boolean.TRUE);                
                 this.numEventsReceived++;
+                numConsecutiveMisdetected = 0;
 
                 
                 // Filter events
