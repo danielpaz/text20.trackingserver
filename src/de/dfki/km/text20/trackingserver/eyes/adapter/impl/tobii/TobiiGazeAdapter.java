@@ -58,49 +58,40 @@ import de.dfki.km.text20.trackingserver.eyes.remote.impl.TrackingServerRegistryI
 @PluginImplementation
 public class TobiiGazeAdapter implements GazeAdapter {
 
-    /** */
+    /** Enables us to report errors */
     @InjectPlugin
     public Diagnosis diagnosis;
 
-    /** */
+    /** Needed to obtain Tobii specific configuration */
     @InjectPlugin
     public PluginConfiguration rawConfiguration;
 
-    /** */
+    /** Reflects infos on the tracking device */
     private TrackingDeviceInformation trackingDeviceInfo;
 
-    /** */
+    /** Master queue for submitted events */
     protected BlockingQueue<TrackingEvent> dequeue;
 
-    /** */
-    final List<TrackingClientCallback> allCallbacks = new ArrayList<TrackingClientCallback>();
-
     // TODO: Create superclass and unify the two calibrators
-    /** */
+    /** Tobii calibrator (old) */
     TobiiCalibratorV2 calibratorV2;
     
-    /** */
+    /** Tobii calibrator (new) */
     TobiiCalibratorV5 calibratorV5;
 
     /** */
     final Lock callbacksLock = new ReentrantLock();
 
-    /** */
+    /** Maximal distance in mm we consider */
     float maxDistance = 700;
 
-    /** */
+    /** Minimal distance */
     float minDistance = 200;
 
-    /** */
-    final BlockingQueue<TrackingEvent> trackingEvents = new LinkedBlockingQueue<TrackingEvent>();
-    
-    /** Used for tracing */
-    protected DiagnosisChannel<String> log;
 
     /** */
     @Init
     public void init() {
-        this.log = this.diagnosis.channel(CommonAdapterTracer.class);
         this.calibratorV2 = new TobiiCalibratorV2(this);
         this.calibratorV5 = new TobiiCalibratorV5(this);
     }
@@ -117,7 +108,7 @@ public class TobiiGazeAdapter implements GazeAdapter {
     @Override
     public void adapterCommand(final AdapterCommand command,
                                final AdapterCommandOption... options) {
-        this.log.status("adaptercommand/call", new OptionInfo("command", command.toString()));
+        this.diagnosis.channel(CommonAdapterTracer.class).status("adaptercommand/call", new OptionInfo("command", command.toString()));
         
         switch (command) {
         case CALIBRATE:
@@ -125,7 +116,7 @@ public class TobiiGazeAdapter implements GazeAdapter {
             break;
         //    	case CALIBRATE_PRINT: calibratorV2.printout(); break;
         default:
-            this.log.status("adaptercommand/unhandledcommand", new OptionInfo("command", command.toString()));            
+            this.diagnosis.channel(CommonAdapterTracer.class).status("adaptercommand/unhandledcommand", new OptionInfo("command", command.toString()));            
             break;
         }
 
@@ -160,94 +151,8 @@ public class TobiiGazeAdapter implements GazeAdapter {
     @Override
     @SuppressWarnings("boxing")
     public void setup(final BlockingQueue<TrackingEvent> eventQueue) {
-        this.log.status("setup/start");            
-        try {
-            this.dequeue = eventQueue;
-            
-            this.log.status("setup/init/pre");
-            final PluginConfigurationUtil configuration = new PluginConfigurationUtil(this.rawConfiguration);
-            final FilterStage filter = new Filter(this);
-            
-            EyeTracker2Java.initialize();
-            this.log.status("setup/init/post");            
-
-            
-            // Obtain remote TET ip
-            final String remoteTETServer = configuration.getString(TobiiGazeAdapter.class, "tobii.server", "127.0.0.1");
-            final String tetApiVersion = configuration.getString(TobiiGazeAdapter.class, "tobii.api");
-            final int remoteTETServerPort = configuration.getInt(TobiiGazeAdapter.class, "tobii.port", 4455);
-            this.minDistance = configuration.getFloat(TobiiGazeAdapter.class, "device.distance.min", 200f);
-            this.maxDistance = configuration.getFloat(TobiiGazeAdapter.class, "device.distance.max", 700f);
-
-            // Set IP to preferences
-            final Preferences p = PreferencesUtil.newPreferences();
-            
-            this.log.status("setup/config", new OptionInfo("tobii.server", remoteTETServer), new OptionInfo("tobii.api", tetApiVersion), new OptionInfo("tobii.port", "" + remoteTETServerPort));
-            
-            if ("v2".equals(tetApiVersion)) {
-                p.node(FilterRegistry.GLOBAL_PREFERENCES).put(LiveTetSessionV2.PREFKEY_TET_SERVER, remoteTETServer);
-            }
-            if ("v5".equals(tetApiVersion)) {
-                p.node(FilterRegistry.GLOBAL_PREFERENCES).put(LiveTetSessionV5.PREFKEY_TET_SERVER, remoteTETServer);
-            }
-            
-            // Setup screensizes (TODO: Do we really need this?)
-            p.node(FilterRegistry.GLOBAL_PREFERENCES).put("SCREEN_WIDTH", configuration.getString(TrackingServerRegistryImpl.class, "screen.width"));
-            p.node(FilterRegistry.GLOBAL_PREFERENCES).put("SCREEN_HEIGHT", configuration.getString(TrackingServerRegistryImpl.class, "screen.height"));
-
-
-            this.log.status("setup/buildup");            
-            
-            // Setting up calibrator
-            if ("v2".equals(tetApiVersion)) {
-                this.calibratorV2.buildUp(remoteTETServer, remoteTETServerPort);
-            }
-            if ("v5".equals(tetApiVersion)) {
-                this.calibratorV5.buildUp(remoteTETServer, remoteTETServerPort);
-            }
-
-            
-            
-
-            // Create new EyeTracker2Java session and filter
-            this.log.status("setup/createsession/pre");            
-            final TrackingSession session;
-            if ("v2".equals(tetApiVersion)) {
-                session = TrackingSessionManager.getInstance().createSession(SessionMode.LiveTetSessionV2, p);
-            } else
-            if ("v5".equals(tetApiVersion)) {
-                session = TrackingSessionManager.getInstance().createSession(SessionMode.LiveTetSessionV5, p);
-            } else {
-                session = null;
-                this.log.status("setup/createsession/unknownmethod");            
-            }
-            this.log.status("setup/createsession/post");            
-
-            
-            // Prepare chain elements
-            final FilterDefinition filterPixelCoords = new FilterDefinition(PixelCoordsFilter.class.getName());
-            final FilterDefinition filterSingleCoords = new FilterDefinition(SingleCoordCombinationFilter.class.getName());
-
-            
-            // Create filter output
-            final FilterOutput output = FilterChainBuilder.addFilterChain(session, filterPixelCoords, filterSingleCoords);
-
-            
-            // Setup device info
-            this.trackingDeviceInfo = new TrackingDeviceInformation();
-            this.trackingDeviceInfo.trackingDeviceManufacturer = "Tobii";
-            this.trackingDeviceInfo.deviceName = configuration.getString(TobiiGazeAdapter.class, "device.name", "unknown");
-            this.trackingDeviceInfo.hardwareID = configuration.getString(TobiiGazeAdapter.class, "device.id", "unknown");
-
-            // And connect our filter
-            this.log.status("setup/connect");            
-            filter.connectToOutput(output);
-        } catch (final EyetrackerException e) {
-            this.log.status("setup/exception/eyetrackerexception", new OptionInfo("message", e.getMessage()));            
-            e.printStackTrace();
-        }
-        
-        this.log.status("setup/stop");                    
+        this.diagnosis.channel(CommonAdapterTracer.class).status("setup/call");  
+        this.dequeue = eventQueue;
     }
 
     /*
@@ -257,15 +162,91 @@ public class TobiiGazeAdapter implements GazeAdapter {
      */
     @Override
     public void start() {
-        this.log.status("start/start");            
-
+        this.diagnosis.channel(CommonAdapterTracer.class).status("start/start");            
+        
+        // In here we try to establish an connection to the Tobii adapter.
         try {
+            this.diagnosis.channel(CommonAdapterTracer.class).status("start/init/pre");
+            final PluginConfigurationUtil configuration = new PluginConfigurationUtil(this.rawConfiguration);
+            final FilterStage filter = new Filter(this);
+            
+            // Initialize low level adapter data
+            EyeTracker2Java.initialize();
+            this.diagnosis.channel(CommonAdapterTracer.class).status("start/init/post");            
+
+            
+            // Obtain remote TET IP and other configuration items
+            final String remoteTETServer = configuration.getString(TobiiGazeAdapter.class, "tobii.server", "127.0.0.1");
+            final String tetApiVersion = configuration.getString(TobiiGazeAdapter.class, "tobii.api");
+            final int remoteTETServerPort = configuration.getInt(TobiiGazeAdapter.class, "tobii.port", 4455);
+            this.minDistance = configuration.getFloat(TobiiGazeAdapter.class, "device.distance.min", 200f);
+            this.maxDistance = configuration.getFloat(TobiiGazeAdapter.class, "device.distance.max", 700f);
+            this.diagnosis.channel(CommonAdapterTracer.class).status("start/config", new OptionInfo("tobii.server", remoteTETServer), new OptionInfo("tobii.api", tetApiVersion), new OptionInfo("tobii.port", "" + remoteTETServerPort));
+
+            // Set IP to preferences
+            final Preferences p = PreferencesUtil.newPreferences();
+            if ("v2".equals(tetApiVersion)) {
+                p.node(FilterRegistry.GLOBAL_PREFERENCES).put(LiveTetSessionV2.PREFKEY_TET_SERVER, remoteTETServer);
+            }
+            if ("v5".equals(tetApiVersion)) {
+                p.node(FilterRegistry.GLOBAL_PREFERENCES).put(LiveTetSessionV5.PREFKEY_TET_SERVER, remoteTETServer);
+            }
+
+            // Setup screensizes (TODO: Do we really need this?)
+            p.node(FilterRegistry.GLOBAL_PREFERENCES).put("SCREEN_WIDTH", configuration.getString(TrackingServerRegistryImpl.class, "screen.width"));
+            p.node(FilterRegistry.GLOBAL_PREFERENCES).put("SCREEN_HEIGHT", configuration.getString(TrackingServerRegistryImpl.class, "screen.height"));
+
+            
+            this.diagnosis.channel(CommonAdapterTracer.class).status("start/buildup");            
+            
+            // Setting up calibrator
+            if ("v2".equals(tetApiVersion)) {
+                this.calibratorV2.buildUp(remoteTETServer, remoteTETServerPort);
+            }
+            if ("v5".equals(tetApiVersion)) {
+                this.calibratorV5.buildUp(remoteTETServer, remoteTETServerPort);
+            }
+            
+            // Create new EyeTracker2Java session and filter
+            this.diagnosis.channel(CommonAdapterTracer.class).status("start/createsession/pre");            
+            final TrackingSession session;
+            if ("v2".equals(tetApiVersion)) {
+                session = TrackingSessionManager.getInstance().createSession(SessionMode.LiveTetSessionV2, p);
+            } else
+            if ("v5".equals(tetApiVersion)) {
+                session = TrackingSessionManager.getInstance().createSession(SessionMode.LiveTetSessionV5, p);
+            } else {
+                session = null;
+                this.diagnosis.channel(CommonAdapterTracer.class).status("start/createsession/unknownmethod");            
+            }
+            this.diagnosis.channel(CommonAdapterTracer.class).status("start/createsession/post");            
+            
+            
+            // Prepare chain elements
+            final FilterDefinition filterPixelCoords = new FilterDefinition(PixelCoordsFilter.class.getName());
+            final FilterDefinition filterSingleCoords = new FilterDefinition(SingleCoordCombinationFilter.class.getName());
+
+            
+            // Create filter output
+            final FilterOutput output = FilterChainBuilder.addFilterChain(session, filterPixelCoords, filterSingleCoords);
+            
+            // Setup device info
+            this.trackingDeviceInfo = new TrackingDeviceInformation();
+            this.trackingDeviceInfo.trackingDeviceManufacturer = "Tobii";
+            this.trackingDeviceInfo.deviceName = configuration.getString(TobiiGazeAdapter.class, "device.name", "unknown");
+            this.trackingDeviceInfo.hardwareID = configuration.getString(TobiiGazeAdapter.class, "device.id", "unknown");
+            
+            // And connect our filter
+            this.diagnosis.channel(CommonAdapterTracer.class).status("start/connect");            
+            filter.connectToOutput(output);
+        	
             TrackingSessionManager.getInstance().startTracking();
+            
         } catch (final Exception e) {
             e.printStackTrace();
         }
         
-        this.log.status("start/end");            
+        this.diagnosis.channel(CommonAdapterTracer.class).status("start/end");            
     }
 
     /*
@@ -275,22 +256,27 @@ public class TobiiGazeAdapter implements GazeAdapter {
      */
     @Override
     public void stop() {
-        this.log.status("stop/start");            
+        this.diagnosis.channel(CommonAdapterTracer.class).status("stop/start");            
 
         try {
             TrackingSessionManager.getInstance().stopTracking();
         } catch (final Exception e) {
             e.printStackTrace();
         }
-        
-        this.log.status("stop/end");                    
+        try {
+        	TrackingSessionManager.getInstance().closeSession();
+        } catch (final Exception e) {
+            e.printStackTrace();
+        }
+
+        this.diagnosis.channel(CommonAdapterTracer.class).status("stop/end");                    
     }
 
     /**
      * @param options
      */
     private void calibrateAdapter(final AdapterCommandOption... options) {
-        this.log.status("calibrate/start");            
+        this.diagnosis.channel(CommonAdapterTracer.class).status("calibrate/start");            
 
         final OptionUtils<AdapterCommandOption> ou = new OptionUtils<AdapterCommandOption>(options);
 
@@ -319,6 +305,6 @@ public class TobiiGazeAdapter implements GazeAdapter {
             e.printStackTrace();
         }
         
-        this.log.status("calibrate/stop");            
+        this.diagnosis.channel(CommonAdapterTracer.class).status("calibrate/stop");            
     }
 }
