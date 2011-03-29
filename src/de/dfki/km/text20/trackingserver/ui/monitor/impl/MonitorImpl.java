@@ -204,8 +204,8 @@ public class MonitorImpl implements Monitor {
             	if(arg0 == STATE.OFF ) return;
             	
                 MonitorImpl.this.trayIcon.setImage(MonitorImpl.this.images[0]);
-                message("Tobii SDK not installed. Please download the Tobii SDK v2 and install it before starting the tracking server.");
-                userNotify("Tracking Server", "Tobii SDK not found. Please install the SDK before starting the tracking server.", MessageType.ERROR);
+                message("Tobii SDK not installed. Please download the Tobii SDK v2 and install it before starting the tracking server. Also, check the configured API version to use (v2/v5) inside 'config.properties'.");
+                userNotify("Tracking Server", "Tobii SDK not found. Please install the SDK before starting the tracking server. Also, check the configured API version to use (v2/v5).", MessageType.ERROR);
             }
         });
         
