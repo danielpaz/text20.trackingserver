@@ -56,7 +56,6 @@ public class Launcher {
                                           UnknownHostException, URISyntaxException,
                                           FileNotFoundException {
 
-
         // Set global look and feel. 
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());

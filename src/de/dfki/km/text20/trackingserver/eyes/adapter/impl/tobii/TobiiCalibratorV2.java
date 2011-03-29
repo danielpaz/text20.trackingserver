@@ -52,7 +52,6 @@ public class TobiiCalibratorV2 {
 		return new Color(red, green, blue);
 	}
 
-	DiagnosisChannel<String> log;
 	private int bgColor;
 	private ITetCalibProc calib;
 	private TetNumCalibPoints numPoints;
@@ -68,7 +67,6 @@ public class TobiiCalibratorV2 {
 		this.pointSpeed = TetCalibPointSpeed.TetCalibPointSpeed_Medium;
 		this.pointColor = getBGR(new Color(100, 100, 255));
 		this.bgColor = getBGR(new Color(163, 163, 163));
-		this.log = tobiiGazeAdapter.log;
 	}
 
 	/**
