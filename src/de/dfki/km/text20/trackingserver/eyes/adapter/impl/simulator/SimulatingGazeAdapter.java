@@ -1,7 +1,9 @@
 package de.dfki.km.text20.trackingserver.eyes.adapter.impl.simulator;
 
+import java.awt.Dimension;
 import java.awt.MouseInfo;
 import java.awt.Point;
+import java.awt.Toolkit;
 import java.util.Random;
 import java.util.concurrent.BlockingQueue;
 
@@ -60,6 +62,7 @@ public class SimulatingGazeAdapter implements GazeAdapter {
     @SuppressWarnings("boxing")
     public void init() {
         final PluginConfigurationUtil pcu = new PluginConfigurationUtil(this.rawConfiguration);
+        final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         
         this.log = this.diagnosis.channel(CommonAdapterTracer.class);
         this.thread = new Thread() {
@@ -104,6 +107,12 @@ public class SimulatingGazeAdapter implements GazeAdapter {
                     trackingEvent.leftEyePos[0] = 0.40f;
                     trackingEvent.leftEyePos[1] = 0.5f;
                     trackingEvent.leftEyePos[2] = 0.5f;
+                    
+                    trackingEvent.gazeLeftPos[0] = this.current.x / (float) screenSize.width; 
+                    trackingEvent.gazeLeftPos[1] = this.current.y / (float) screenSize.height;
+                    
+                    trackingEvent.gazeRightPos[0] = this.current.x / (float) screenSize.width; 
+                    trackingEvent.gazeRightPos[1] = this.current.y / (float) screenSize.height; 
 
                     trackingEvent.rightEyePos[0] = 0.60f;
                     trackingEvent.rightEyePos[1] = 0.5f;
