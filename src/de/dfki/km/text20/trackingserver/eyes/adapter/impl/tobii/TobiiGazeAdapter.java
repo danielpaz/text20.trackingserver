@@ -33,6 +33,7 @@ import de.dfki.eyetracker.util.PreferencesUtil;
 import de.dfki.km.text20.trackingserver.common.adapter.diagnosis.channels.tracing.CommonAdapterTracer;
 import de.dfki.km.text20.trackingserver.eyes.adapter.AdapterCommand;
 import de.dfki.km.text20.trackingserver.eyes.adapter.GazeAdapter;
+import de.dfki.km.text20.trackingserver.eyes.adapter.impl.tobii.diagnosis.channels.status.TobiiSDKNotFoundStatus;
 import de.dfki.km.text20.trackingserver.eyes.adapter.options.AdapterCommandOption;
 import de.dfki.km.text20.trackingserver.eyes.adapter.options.adaptercommand.OptionCalibratorColor;
 import de.dfki.km.text20.trackingserver.eyes.adapter.options.adaptercommand.OptionCalibratorNumPoints;
@@ -238,6 +239,11 @@ public class TobiiGazeAdapter implements GazeAdapter {
             
         } catch (final Exception e) {
             e.printStackTrace();
+            
+            // Check if we have a lowlevel Tobii DLL error due to non installed SDK
+            if(e.getMessage().contains("CoCreateInstance failed")) {
+            	this.diagnosis.channel(TobiiSDKNotFoundStatus.class).status(Boolean.TRUE);
+            }
         }
         
         this.diagnosis.channel(CommonAdapterTracer.class).status("start/end");            

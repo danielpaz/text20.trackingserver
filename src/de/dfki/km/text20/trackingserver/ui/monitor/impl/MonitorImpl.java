@@ -55,6 +55,7 @@ import net.xeoh.plugins.diagnosis.local.Diagnosis;
 import net.xeoh.plugins.diagnosis.local.util.DiagnosisUtil;
 import net.xeoh.plugins.diagnosis.local.util.conditions.TwoStateMatcherAND;
 import net.xeoh.plugins.diagnosis.local.util.conditions.matcher.Is;
+import de.dfki.km.text20.trackingserver.eyes.adapter.impl.tobii.diagnosis.channels.status.TobiiSDKNotFoundStatus;
 import de.dfki.km.text20.trackingserver.eyes.remote.diagnosis.channel.status.ReceivingEvents;
 import de.dfki.km.text20.trackingserver.ui.monitor.Monitor;
 
@@ -190,6 +191,24 @@ public class MonitorImpl implements Monitor {
                 }
             }
         });
+        
+        // Tobii SDK not found monitor (will be fired only once)
+        util.registerCondition(new TwoStateMatcherAND() {
+            @Override
+            protected void setupMatcher() {
+                match(TobiiSDKNotFoundStatus.class, new Is(Boolean.TRUE));
+            }
+            
+            @Override
+            public void stateChanged(STATE arg0) {
+            	if(arg0 == STATE.OFF ) return;
+            	
+                MonitorImpl.this.trayIcon.setImage(MonitorImpl.this.images[0]);
+                message("Tobii SDK not installed. Please download the Tobii SDK v2 and install it before starting the tracking server.");
+                userNotify("Tracking Server", "Tobii SDK not found. Please install the SDK before starting the tracking server.", MessageType.ERROR);
+            }
+        });
+        
     }
 
 
