@@ -1,9 +1,6 @@
 package de.dfki.km.text20.trackingserver.eyes.adapter.impl.tobii;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.prefs.Preferences;
@@ -18,10 +15,8 @@ import net.xeoh.plugins.base.annotations.meta.Version;
 import net.xeoh.plugins.base.util.OptionUtils;
 import net.xeoh.plugins.base.util.PluginConfigurationUtil;
 import net.xeoh.plugins.diagnosis.local.Diagnosis;
-import net.xeoh.plugins.diagnosis.local.DiagnosisChannel;
 import net.xeoh.plugins.diagnosis.local.options.status.OptionInfo;
 import de.dfki.eyetracker.EyeTracker2Java;
-import de.dfki.eyetracker.EyetrackerException;
 import de.dfki.eyetracker.filter.FilterChainBuilder;
 import de.dfki.eyetracker.filter.FilterDefinition;
 import de.dfki.eyetracker.filter.FilterOutput;
@@ -42,7 +37,6 @@ import de.dfki.km.text20.trackingserver.eyes.adapter.options.AdapterCommandOptio
 import de.dfki.km.text20.trackingserver.eyes.adapter.options.adaptercommand.OptionCalibratorColor;
 import de.dfki.km.text20.trackingserver.eyes.adapter.options.adaptercommand.OptionCalibratorNumPoints;
 import de.dfki.km.text20.trackingserver.eyes.adapter.options.adaptercommand.OptionCalibratorPointSpeed;
-import de.dfki.km.text20.trackingserver.eyes.remote.TrackingClientCallback;
 import de.dfki.km.text20.trackingserver.eyes.remote.TrackingDeviceInformation;
 import de.dfki.km.text20.trackingserver.eyes.remote.TrackingEvent;
 import de.dfki.km.text20.trackingserver.eyes.remote.impl.TrackingServerRegistryImpl;
@@ -149,7 +143,6 @@ public class TobiiGazeAdapter implements GazeAdapter {
      * .util.concurrent.BlockingQueue)
      */
     @Override
-    @SuppressWarnings("boxing")
     public void setup(final BlockingQueue<TrackingEvent> eventQueue) {
         this.diagnosis.channel(CommonAdapterTracer.class).status("setup/call");  
         this.dequeue = eventQueue;
@@ -160,6 +153,7 @@ public class TobiiGazeAdapter implements GazeAdapter {
      * 
      * @see de.dfki.km.augmentedtext.trackingserver.adapter.GazeAdapter#start()
      */
+    @SuppressWarnings("boxing")
     @Override
     public void start() {
         this.diagnosis.channel(CommonAdapterTracer.class).status("start/start");            

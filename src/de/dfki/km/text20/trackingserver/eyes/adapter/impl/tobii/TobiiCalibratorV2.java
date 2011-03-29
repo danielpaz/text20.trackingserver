@@ -3,8 +3,6 @@ package de.dfki.km.text20.trackingserver.eyes.adapter.impl.tobii;
 import java.awt.Color;
 import java.util.logging.Logger;
 
-import net.xeoh.plugins.diagnosis.local.DiagnosisChannel;
-
 import com4j.ComException;
 
 import de.dfki.eyetracker.EyetrackerException;
