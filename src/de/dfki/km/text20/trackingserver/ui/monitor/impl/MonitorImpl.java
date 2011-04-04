@@ -32,6 +32,7 @@ import static net.jcores.CoreKeeper.$;
 import java.awt.AWTException;
 import java.awt.BorderLayout;
 import java.awt.Container;
+import java.awt.Desktop;
 import java.awt.Image;
 import java.awt.MenuItem;
 import java.awt.PopupMenu;
@@ -41,6 +42,8 @@ import java.awt.TrayIcon;
 import java.awt.TrayIcon.MessageType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -50,6 +53,7 @@ import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
+import net.jcores.interfaces.functions.F0;
 import net.xeoh.plugins.base.annotations.PluginImplementation;
 import net.xeoh.plugins.base.annotations.events.Init;
 import net.xeoh.plugins.base.annotations.injections.InjectPlugin;
@@ -57,6 +61,9 @@ import net.xeoh.plugins.diagnosis.local.Diagnosis;
 import net.xeoh.plugins.diagnosis.local.util.DiagnosisUtil;
 import net.xeoh.plugins.diagnosis.local.util.conditions.TwoStateMatcherAND;
 import net.xeoh.plugins.diagnosis.local.util.conditions.matcher.Is;
+import net.xeoh.plugins.meta.updatecheck.UpdateCheck;
+import net.xeoh.plugins.meta.updatecheck.UpdateInformation;
+import net.xeoh.plugins.meta.updatecheck.UpdateListener;
 import de.dfki.km.text20.trackingserver.eyes.adapter.impl.tobii.diagnosis.channels.status.TobiiSDKNotFoundStatus;
 import de.dfki.km.text20.trackingserver.eyes.remote.diagnosis.channel.status.ReceivingEvents;
 import de.dfki.km.text20.trackingserver.ui.monitor.Monitor;
@@ -69,6 +76,10 @@ public class MonitorImpl implements Monitor {
     /** Needed to monitor our status */
     @InjectPlugin
     public Diagnosis diagnosis;
+    
+    /** To check and inform upon new versions */
+    @InjectPlugin
+    public UpdateCheck updateCheck;
 
     /** Current tray icon */
     TrayIcon trayIcon;
@@ -109,6 +120,68 @@ public class MonitorImpl implements Monitor {
             e.printStackTrace();
         }
 
+        
+        // Add an update listener to the tracking server
+        this.updateCheck.registerUpdateListner(new UpdateListener() {
+            @Override
+            public void onUpdate(final UpdateInformation info) {
+                // In case we have an update info, add the download button
+                $.edt(new F0() {
+                    @Override
+                    public void f() {
+                        // Create a new menu item 
+                        final MenuItem update = new MenuItem("Download Update");
+                        update.addActionListener(new ActionListener() {
+                            @Override
+                            public void actionPerformed(ActionEvent e) {
+                                // First, we notify the user ...
+                                userNotify("Update Info", "Starting download ...", MessageType.INFO);
+                                message("Starting download to " + new File(".").getAbsolutePath());
+
+                                // Then we start downloading in the background
+                                $.oneTime(new F0() {
+                                    @Override
+                                    public void f() {
+                                        // Download this to our folder ...
+                                        $(info.url).uri().download(".");
+                                        
+                                        // And inform the user that we have something
+                                        $.edt(new F0 () {
+                                            @Override
+                                            public void f() {
+                                                userNotify("Update Info", "Update has been downloaded to the tracking server's folder.", MessageType.INFO);
+                                                message("Update downloaded.");
+                                                try {
+                                                    Desktop.getDesktop().open(new File("."));
+                                                } catch (IOException xxx) {
+                                                }
+                                                
+                                                // Eventually remove the update menu
+                                                MonitorImpl.this.trayIcon.getPopupMenu().remove(update);
+                                            }
+                                        });
+                                    }
+                                }, 1);
+                            }
+                        });
+                        
+                        // And add it
+                        MonitorImpl.this.trayIcon.getPopupMenu().addSeparator();
+                        MonitorImpl.this.trayIcon.getPopupMenu().add(update);
+                    }
+                });
+                
+                // Also, notify the user
+                userNotify("Update Info", "There is a new version (" + info.latestVersion + ") available for download. Get it at text20.net, or by clicking this icon's menu.", MessageType.INFO);
+            }
+            
+            @Override
+            public void onMessage(String message) {
+                //
+            }
+        });
+
+        
         registerConditions();
     }
 
@@ -120,11 +193,14 @@ public class MonitorImpl implements Monitor {
      * @param type
      */
     void userNotify(String title, String text, MessageType type) {
+        System.out.println(title + ": " + text);
         if (!$(System.getProperty("os.name")).get("UNDEFINED").toLowerCase().contains("win") || this.trayIcon == null)
             return;
         this.trayIcon.displayMessage(title, text, type);
     }
 
+    
+    /** */
     private void registerConditions() {
         // We register a new monitor for each condition we like to observe.
         final DiagnosisUtil util = new DiagnosisUtil(this.diagnosis);

@@ -38,6 +38,7 @@ import javax.swing.UIManager;
 import net.xeoh.plugins.base.PluginManager;
 import net.xeoh.plugins.base.impl.PluginManagerFactory;
 import net.xeoh.plugins.base.util.JSPFProperties;
+import net.xeoh.plugins.meta.updatecheck.UpdateCheck;
 
 /**
  * @author Ralf Biedert
@@ -82,7 +83,10 @@ public class Launcher {
         }
 
         props.setProperty(PluginManager.class, "cache.enabled", "true");
-        props.setProperty(PluginManager.class, "cache.mode", "weak"); //optional
+        props.setProperty(PluginManager.class, "cache.mode", "weak"); 
+        props.setProperty(UpdateCheck.class, "update.url", "http://api.text20.net/common/versioncheck/");
+        props.setProperty(UpdateCheck.class, "product.name", "text20.trackingserver");
+        props.setProperty(UpdateCheck.class, "product.version", "1.4"); 
 
         final PluginManager pluginManager = PluginManagerFactory.createPluginManager(props);
 
