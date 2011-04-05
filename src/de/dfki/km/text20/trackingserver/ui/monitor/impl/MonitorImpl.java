@@ -125,51 +125,58 @@ public class MonitorImpl implements Monitor {
         this.updateCheck.registerUpdateListner(new UpdateListener() {
             @Override
             public void onUpdate(final UpdateInformation info) {
-                // In case we have an update info, add the download button
-                $.edt(new F0() {
+                // In case we have an update info, add the download button (after some delay to make sure 
+                // the button is there).
+                $.oneTime(new F0() {
                     @Override
                     public void f() {
-                        // Create a new menu item 
-                        final MenuItem update = new MenuItem("Download Update");
-                        update.addActionListener(new ActionListener() {
+                        $.edt(new F0() {
                             @Override
-                            public void actionPerformed(ActionEvent e) {
-                                // First, we notify the user ...
-                                userNotify("Update Info", "Starting download ...", MessageType.INFO);
-                                message("Starting download to " + new File(".").getAbsolutePath());
-
-                                // Then we start downloading in the background
-                                $.oneTime(new F0() {
+                            public void f() {
+                                // Create a new menu item 
+                                final MenuItem update = new MenuItem("Download Update");
+                                update.addActionListener(new ActionListener() {
                                     @Override
-                                    public void f() {
-                                        // Download this to our folder ...
-                                        $(info.url).uri().download(".");
-                                        
-                                        // And inform the user that we have something
-                                        $.edt(new F0 () {
+                                    public void actionPerformed(ActionEvent e) {
+                                        // First, we notify the user ...
+                                        userNotify("Update Info", "Starting download ...", MessageType.INFO);
+                                        message("Starting download to " + new File(".").getAbsolutePath());
+
+                                        // Then we start downloading in the background
+                                        $.oneTime(new F0() {
                                             @Override
                                             public void f() {
-                                                userNotify("Update Info", "Update has been downloaded to the tracking server's folder.", MessageType.INFO);
-                                                message("Update downloaded.");
-                                                try {
-                                                    Desktop.getDesktop().open(new File("."));
-                                                } catch (IOException xxx) {
-                                                }
+                                                // Download this to our folder ...
+                                                $(info.url).uri().download(".");
                                                 
-                                                // Eventually remove the update menu
-                                                MonitorImpl.this.trayIcon.getPopupMenu().remove(update);
+                                                // And inform the user that we have something
+                                                $.edt(new F0 () {
+                                                    @Override
+                                                    public void f() {
+                                                        userNotify("Update Info", "Update has been downloaded to the tracking server's folder.", MessageType.INFO);
+                                                        message("Update downloaded.");
+                                                        try {
+                                                            Desktop.getDesktop().open(new File("."));
+                                                        } catch (IOException xxx) {
+                                                        }
+                                                        
+                                                        // Eventually remove the update menu
+                                                        MonitorImpl.this.trayIcon.getPopupMenu().remove(update);
+                                                    }
+                                                });
                                             }
-                                        });
+                                        }, 1);
                                     }
-                                }, 1);
+                                });
+                                
+                                // And add it
+                                MonitorImpl.this.trayIcon.getPopupMenu().addSeparator();
+                                MonitorImpl.this.trayIcon.getPopupMenu().add(update);
                             }
-                        });
-                        
-                        // And add it
-                        MonitorImpl.this.trayIcon.getPopupMenu().addSeparator();
-                        MonitorImpl.this.trayIcon.getPopupMenu().add(update);
+                        });                        
                     }
-                });
+                }, 3000);
+
                 
                 // Also, notify the user
                 userNotify("Update Info", "There is a new version (" + info.latestVersion + ") available for download. Get it at text20.net, or by clicking this icon's menu.", MessageType.INFO);
