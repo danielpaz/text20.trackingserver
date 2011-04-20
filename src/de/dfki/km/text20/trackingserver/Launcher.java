@@ -64,11 +64,11 @@ public class Launcher {
             System.out.println("Unable to load native look and feel");
         }
 
-        
         // The first thing we do is to redirect std out / std err (Fixed #10)
         if ($(args).filter("-noredirect").size() == 0) {
-            System.setOut(new PrintStream("output.log"));
-            System.setErr(new PrintStream("error.log"));
+            // TODO: uncomment this
+            //            System.setOut(new PrintStream("output.log"));
+            //            System.setErr(new PrintStream("error.log"));
         }
 
         // Now we start JSPF and the rest
@@ -83,10 +83,10 @@ public class Launcher {
         }
 
         props.setProperty(PluginManager.class, "cache.enabled", "true");
-        props.setProperty(PluginManager.class, "cache.mode", "weak"); 
+        props.setProperty(PluginManager.class, "cache.mode", "weak");
         props.setProperty(UpdateCheck.class, "update.url", "http://api.text20.net/common/versioncheck/");
         props.setProperty(UpdateCheck.class, "product.name", "text20.trackingserver");
-        props.setProperty(UpdateCheck.class, "product.version", "1.4"); 
+        props.setProperty(UpdateCheck.class, "product.version", "1.4");
 
         final PluginManager pluginManager = PluginManagerFactory.createPluginManager(props);
 

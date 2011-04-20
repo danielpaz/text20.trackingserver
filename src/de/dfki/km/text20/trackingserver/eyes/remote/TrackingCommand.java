@@ -26,18 +26,27 @@ package de.dfki.km.text20.trackingserver.eyes.remote;
  *
  */
 public enum TrackingCommand {
+    
     /**
      * Start the device 
      */
     START,
+    
     /**
      * Stop the device.
      */
     STOP,
+    
     /**
      * Recalibrates the tracking device on the fly. 
      */
     ONLINE_RECALIBRATION,
+    
+    /**
+     * Recalibrates/updates reference points without clearing existing points.
+     */
+    UPDATE_CALIBRATION,
+    
     /**
      * Removes all recalibration points. Should be called before a ONLINE_RECALIB. is performed.
      */
