@@ -73,8 +73,7 @@ public class TrackingServerRegistryImpl
             try {
                 // Try to get the lastest event
                 TrackingEvent latestEvent = this.events.poll(500, TimeUnit.MILLISECONDS);
-                
-                
+
                 // Don't warn if we haven't received any event yet.
                 if (latestEvent == null && this.numEventsReceived > 0) {
                     this.diagnosis.channel(CommonRegistryTracer.class).status("sender/polltimeout/stalled", new OptionInfo("alreadyreceived", "" + this.numEventsReceived), new OptionInfo("misdetected", "" + numMisdetected));
@@ -85,50 +84,47 @@ public class TrackingServerRegistryImpl
                     // It appears that sometimes (once every few minutes) we don't receive any
                     // event from the Tobii adapter. In that case, don't warn instantly, but rather 
                     // give the interface a few tries
-                    if(numConsecutiveMisdetected >= 3) {
+                    if (numConsecutiveMisdetected >= 3) {
                         this.diagnosis.channel(ReceivingEvents.class).status(Boolean.FALSE);
                     }
-                    
+
                     // Check for emergency restart.
                     if (numConsecutiveMisdetected >= 6) {
-                        this.diagnosis.channel(CommonRegistryTracer.class).status("sender/polltimeout/emergencystop", new OptionInfo("alreadyreceived", "" + this.numEventsReceived), new OptionInfo("misdetected", "" + numMisdetected));                        
+                        this.diagnosis.channel(CommonRegistryTracer.class).status("sender/polltimeout/emergencystop", new OptionInfo("alreadyreceived", "" + this.numEventsReceived), new OptionInfo("misdetected", "" + numMisdetected));
                         this.usedAdpater.stop();
-                        this.diagnosis.channel(CommonRegistryTracer.class).status("sender/polltimeout/emergencystart", new OptionInfo("alreadyreceived", "" + this.numEventsReceived), new OptionInfo("misdetected", "" + numMisdetected));                        
+                        this.diagnosis.channel(CommonRegistryTracer.class).status("sender/polltimeout/emergencystart", new OptionInfo("alreadyreceived", "" + this.numEventsReceived), new OptionInfo("misdetected", "" + numMisdetected));
                         this.usedAdpater.start();
                     }
                     continue;
                 }
-                
+
                 // In case the first event was null
-                if(latestEvent == null) {
+                if (latestEvent == null) {
                     this.diagnosis.channel(ReceivingEvents.class).status(Boolean.FALSE);
                     this.diagnosis.channel(CommonRegistryTracer.class).status("sender/polltimeout/nodata");
                     continue;
                 }
-                
+
                 // Increase number of successful events
-                this.diagnosis.channel(ReceivingEvents.class).status(Boolean.TRUE);                
+                this.diagnosis.channel(ReceivingEvents.class).status(Boolean.TRUE);
                 this.numEventsReceived++;
                 numConsecutiveMisdetected = 0;
 
-                
                 // Filter events
                 final TrackingEvent filteredEvent = filterEvent(latestEvent);
-                
-                
+
                 // Output something if we are running fine ...
                 if (this.numEventsReceived % 300 == 0 && this.numEventsReceived > 0) {
                     String gaze = "";
                     String filtered = "";
-                    
-                    if(latestEvent.centerGaze != null) {
+
+                    if (latestEvent.centerGaze != null) {
                         gaze = latestEvent.centerGaze.x + "/" + latestEvent.centerGaze.y;
                         filtered = filteredEvent.centerGaze.x + "/" + filteredEvent.centerGaze.y;
                     }
-                    
-                    this.diagnosis.channel(CommonRegistryTracer.class).status("sender/receivedsome",  new OptionInfo("alreadyreceived", "" + this.numEventsReceived), new OptionInfo("gazepos", gaze), new OptionInfo("filteredpos", filtered));                    
-                }
 
+                    this.diagnosis.channel(CommonRegistryTracer.class).status("sender/receivedsome", new OptionInfo("alreadyreceived", "" + this.numEventsReceived), new OptionInfo("gazepos", gaze), new OptionInfo("filteredpos", filtered));
+                }
 
                 // Send evens to listener
                 this.callbacksLock.lock();
@@ -140,7 +136,7 @@ public class TrackingServerRegistryImpl
                     this.callbacksLock.unlock();
                 }
             } catch (InterruptedException e) {
-                this.diagnosis.channel(CommonRegistryTracer.class).status("sender/exception/interrupted", new OptionInfo("message", e.getMessage()),  new OptionInfo("alreadyreceived", "" + this.numEventsReceived));                             
+                this.diagnosis.channel(CommonRegistryTracer.class).status("sender/exception/interrupted", new OptionInfo("message", e.getMessage()), new OptionInfo("alreadyreceived", "" + this.numEventsReceived));
             }
         }
     }
@@ -175,7 +171,7 @@ public class TrackingServerRegistryImpl
     @SuppressWarnings("boxing")
     public void sendCommand(TrackingCommand command, SendCommandOption... options) {
         this.diagnosis.channel(CommonRegistryTracer.class).status("sendcommand/command", new OptionInfo("command", command.toString()));
-        
+
         if (this.usedAdpater == null) return;
 
         // Process our options
@@ -204,6 +200,24 @@ public class TrackingServerRegistryImpl
                 final Integer dy = (Integer) objects[2];
                 final Long time = (Long) objects[3];
                 this.displacementFilter.updateReferencePoint(point, dx, dy, time);
+            }
+            break;
+        case UPDATE_CALIBRATION:
+            if (!ou.contains(OptionRecalibrationPattern.class)) break;
+
+            final OptionRecalibrationPattern orp = ou.get(OptionRecalibrationPattern.class);
+            final List<Object[]> pointsbla = orp.getPoints();
+
+            for (Object[] objects : pointsbla) {
+                if (objects.length != 4) continue;
+
+                final Point point = (Point) objects[0];
+                final Integer dx = (Integer) objects[1];
+                final Integer dy = (Integer) objects[2];
+                final Long time = (Long) objects[3];
+                this.displacementFilter.updateReferencePoint(point, dx, dy, time);
+
+                System.out.println("recalibrate " + point + " " + dx + " " + dy + " " + time);
             }
             break;
         case DROP_RECALIBRATION:

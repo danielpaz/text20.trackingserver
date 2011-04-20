@@ -11,3 +11,5 @@ syntax: regexp
 ^jspf\.plugin\.cache$
 syntax: regexp
 ^diagnosis\.record$
+syntax: regexp
+^text20\.framework-1\.3\.0\.zip$
