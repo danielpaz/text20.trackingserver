@@ -66,9 +66,8 @@ public class Launcher {
 
         // The first thing we do is to redirect std out / std err (Fixed #10)
         if ($(args).filter("-noredirect").size() == 0) {
-            // TODO: uncomment this
-            //            System.setOut(new PrintStream("output.log"));
-            //            System.setErr(new PrintStream("error.log"));
+            System.setOut(new PrintStream("output.log"));
+            System.setErr(new PrintStream("error.log"));
         }
 
         // Now we start JSPF and the rest
