@@ -185,23 +185,8 @@ public class TrackingServerRegistryImpl
             this.usedAdpater.stop();
             break;
         case ONLINE_RECALIBRATION:
-            if (!ou.contains(OptionRecalibrationPattern.class)) break;
-
-            final OptionRecalibrationPattern rcp = ou.get(OptionRecalibrationPattern.class);
-            final List<Object[]> points = rcp.getPoints();
-
             this.displacementFilter.clearReferencePoints();
-
-            for (Object[] objects : points) {
-                if (objects.length != 4) continue;
-
-                final Point point = (Point) objects[0];
-                final Integer dx = (Integer) objects[1];
-                final Integer dy = (Integer) objects[2];
-                final Long time = (Long) objects[3];
-                this.displacementFilter.updateReferencePoint(point, dx, dy, time);
-            }
-            break;
+            //$FALL-THROUGH$
         case UPDATE_CALIBRATION:
             if (!ou.contains(OptionRecalibrationPattern.class)) break;
 
@@ -216,8 +201,6 @@ public class TrackingServerRegistryImpl
                 final Integer dy = (Integer) objects[2];
                 final Long time = (Long) objects[3];
                 this.displacementFilter.updateReferencePoint(point, dx, dy, time);
-
-                System.out.println("recalibrate " + point + " " + dx + " " + dy + " " + time);
             }
             break;
         case DROP_RECALIBRATION:
