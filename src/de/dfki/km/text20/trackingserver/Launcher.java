@@ -21,7 +21,7 @@
  */
 package de.dfki.km.text20.trackingserver;
 
-import static net.jcores.CoreKeeper.$;
+import static net.jcores.jre.CoreKeeper.$;
 
 import java.io.File;
 import java.io.FileInputStream;

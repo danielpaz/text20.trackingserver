@@ -27,7 +27,7 @@
  */
 package de.dfki.km.text20.trackingserver.ui.monitor.impl;
 
-import static net.jcores.CoreKeeper.$;
+import static net.jcores.jre.CoreKeeper.$;
 
 import java.awt.AWTException;
 import java.awt.BorderLayout;
@@ -53,7 +53,7 @@ import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
-import net.jcores.interfaces.functions.F0;
+import net.jcores.shared.interfaces.functions.F0;
 import net.xeoh.plugins.base.annotations.PluginImplementation;
 import net.xeoh.plugins.base.annotations.events.Init;
 import net.xeoh.plugins.base.annotations.injections.InjectPlugin;
@@ -127,10 +127,10 @@ public class MonitorImpl implements Monitor {
             public void onUpdate(final UpdateInformation info) {
                 // In case we have an update info, add the download button (after some delay to make sure 
                 // the button is there).
-                $.oneTime(new F0() {
+                $.sys.oneTime(new F0() {
                     @Override
                     public void f() {
-                        $.edt(new F0() {
+                        $.ui.edt(new F0() {
                             @Override
                             public void f() {
                                 // Create a new menu item 
@@ -143,14 +143,14 @@ public class MonitorImpl implements Monitor {
                                         message("Starting download to " + new File(".").getAbsolutePath());
 
                                         // Then we start downloading in the background
-                                        $.oneTime(new F0() {
+                                        $.sys.oneTime(new F0() {
                                             @Override
                                             public void f() {
                                                 // Download this to our folder ...
                                                 $(info.url).uri().download(".");
                                                 
                                                 // And inform the user that we have something
-                                                $.edt(new F0 () {
+                                                $.ui.edt(new F0 () {
                                                     @Override
                                                     public void f() {
                                                         userNotify("Update Info", "Update has been downloaded to the tracking server's folder.", MessageType.INFO);

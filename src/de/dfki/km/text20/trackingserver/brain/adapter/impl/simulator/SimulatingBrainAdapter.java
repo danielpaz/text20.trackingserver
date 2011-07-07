@@ -21,6 +21,8 @@
  */
 package de.dfki.km.text20.trackingserver.brain.adapter.impl.simulator;
 
+import static net.jcores.jre.CoreKeeper.$;
+
 import java.util.concurrent.BlockingQueue;
 
 import net.xeoh.plugins.base.annotations.Capabilities;
@@ -43,9 +45,7 @@ public class SimulatingBrainAdapter implements BrainAdapter {
 
     /**  */
     @Init
-    public void init() {
-        //
-    }
+    public void init() { }
 
     /* (non-Javadoc)
      * @see de.dfki.km.text20.trackingserver.brain.adapter.BrainAdapter#start()
@@ -60,12 +60,14 @@ public class SimulatingBrainAdapter implements BrainAdapter {
     public void pollChannels() {
         TrackingEvent trackingEvent = new TrackingEvent();
         
-        trackingEvent.channels.put("channel:furrow", new Double(Math.random() * 2 - 1));
-        trackingEvent.channels.put("channel:smile", new Double(Math.random() * 2 - 1));
-        trackingEvent.channels.put("channel:laugh", new Double(Math.random() * 2 - 1));
-        trackingEvent.channels.put("channel:instExcitement", new Double(Math.random() * 2 - 1));
-        trackingEvent.channels.put("channel:engagement", new Double(Math.random() * 2 - 1));
-        
+        final TrackingEvent t = new TrackingEvent();
+        t.deviceReadings = new double[5];
+        t.deviceReadings[0] = Math.random() * 2 - 1;
+        t.deviceReadings[1] = Math.random() * 2 - 1;
+        t.deviceReadings[2] = Math.random() * 2 - 1;
+        t.deviceReadings[3] = Math.random() * 2 - 1;
+        t.deviceReadings[4] = Math.random() * 2 - 1;
+
         try {
             if (this.eventQueue == null) return;
             
@@ -75,16 +77,31 @@ public class SimulatingBrainAdapter implements BrainAdapter {
         }
     }
 
+    /* (non-Javadoc)
+     * @see de.dfki.km.text20.trackingserver.common.adapter.CommonAdapter#stop()
+     */
     @Override
     public void stop() {
         /** To be implemented, yet! */
     }
 
+    /* (non-Javadoc)
+     * @see de.dfki.km.text20.trackingserver.common.adapter.CommonAdapter#getDeviceInformation()
+     */
     @Override
     public TrackingDeviceInformation getDeviceInformation() {
-        return new TrackingDeviceInformation();
+        final TrackingDeviceInformation information = new TrackingDeviceInformation();
+        information.channelNames = $("channel:emotion:furrow", "channel:emotion:smile", "channel:emotion:laugh", "channel:emotion:excitement", "channel:emotion:engagement").unsafearray();
+        information.deviceName = "Simulating Adapter";
+        information.hardwareID = "n/a";
+        information.trackingDeviceManufacturer = "Text 2.0 Project";
+        information.hardwareType = "device:simulator";
+        return information;
     }
 
+    /* (non-Javadoc)
+     * @see de.dfki.km.text20.trackingserver.common.adapter.CommonAdapter#setup(java.util.concurrent.BlockingQueue)
+     */
     @Override
     public void setup(BlockingQueue<TrackingEvent> eventQueue) {
         this.eventQueue = eventQueue;

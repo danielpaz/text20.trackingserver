@@ -24,11 +24,17 @@ package de.dfki.km.text20.trackingserver.brain.remote;
 import de.dfki.km.text20.trackingserver.common.remote.CommonDeviceInformation;
 
 /**
- * Ralf Biedert
+ * Information for the given tracking device.
  * 
- * @author rb
+ * @author Ralf Biedert
  */
 public class TrackingDeviceInformation extends CommonDeviceInformation {
     /** */
     private static final long serialVersionUID = -7898108922872157550L;
+    
+    /** Names and orders of our channels */
+    public String[] channelNames;
+
+    /** The type of the adapter */
+    public String hardwareType;
 }

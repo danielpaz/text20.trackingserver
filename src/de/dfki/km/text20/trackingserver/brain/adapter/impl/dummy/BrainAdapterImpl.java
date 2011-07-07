@@ -21,6 +21,8 @@
  */
 package de.dfki.km.text20.trackingserver.brain.adapter.impl.dummy;
 
+import static net.jcores.jre.CoreKeeper.$;
+
 import java.util.concurrent.BlockingQueue;
 
 import net.xeoh.plugins.base.annotations.Capabilities;
@@ -44,7 +46,6 @@ public class BrainAdapterImpl implements BrainAdapter {
     /**  */
     @Init
     public void init() {
-        //
     }
 
     /* (non-Javadoc)
@@ -52,9 +53,6 @@ public class BrainAdapterImpl implements BrainAdapter {
      */
     @Override
     public void start() {
-        /**
-         * To be implemented, yet!
-         */
     }
 
     /**
@@ -63,11 +61,12 @@ public class BrainAdapterImpl implements BrainAdapter {
     @Timer(period = 250)
     public void pollChannels() {
         TrackingEvent t = new TrackingEvent();
-        t.channels.put("channel:furrow", new Double(0.3));
-        t.channels.put("channel:smile", new Double(0.1));
-        t.channels.put("channel:laugh", new Double(0.0));
-        t.channels.put("channel:instExcitement", new Double(0.5));
-        t.channels.put("channel:engagement", new Double(0.6));
+        t.deviceReadings = new double[5];
+        t.deviceReadings[0] = 0.3;
+        t.deviceReadings[1] = 0.1;
+        t.deviceReadings[2] = 0.0;
+        t.deviceReadings[3] = 0.5;
+        t.deviceReadings[4] = 0.6;
         try {
             if (this.eventQueue == null) return;
             this.eventQueue.put(t);
@@ -76,14 +75,26 @@ public class BrainAdapterImpl implements BrainAdapter {
         }
     }
 
+    /* (non-Javadoc)
+     * @see de.dfki.km.text20.trackingserver.common.adapter.CommonAdapter#stop()
+     */
     @Override
     public void stop() {
         // TODO Auto-generated method stub
     }
 
+    /* (non-Javadoc)
+     * @see de.dfki.km.text20.trackingserver.common.adapter.CommonAdapter#getDeviceInformation()
+     */
     @Override
     public TrackingDeviceInformation getDeviceInformation() {
-        return new TrackingDeviceInformation();
+        final TrackingDeviceInformation information = new TrackingDeviceInformation();
+        information.channelNames = $("channel:emotion:furrow", "channel:emotion:smile", "channel:emotion:laugh", "channel:emotion:excitement", "channel:emotion:engagement").unsafearray();
+        information.deviceName = "Dummy Adapter";
+        information.hardwareID = "n/a";
+        information.trackingDeviceManufacturer = "Text 2.0 Project";
+        information.hardwareType = "device:dummy";
+        return information;
     }
 
     @Override

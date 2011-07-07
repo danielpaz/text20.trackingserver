@@ -21,17 +21,15 @@
  */
 package de.dfki.km.text20.trackingserver.brain.remote;
 
-import java.util.HashMap;
-
 import de.dfki.km.text20.trackingserver.common.remote.CommonTrackingEvent;
 
 /**
  * 
- * @author rb
+ * @author Ralf Biedert
  */
 public class TrackingEvent extends CommonTrackingEvent {
     private static final long serialVersionUID = 3557480099000038721L;
 
-    /** Stores all channels and their values for the current measurements */
-    public HashMap<String, Double> channels = new HashMap<String, Double>();
+    /** The actual readings of the device */
+    public double[] deviceReadings;
 }

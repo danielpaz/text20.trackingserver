@@ -24,11 +24,18 @@ package de.dfki.km.text20.trackingserver.eyes.remote;
 import de.dfki.km.text20.trackingserver.common.remote.CommonDeviceInformation;
 
 /**
- * Ralf Biedert
+ * Contains device information about the current eye tracking device.
  * 
- * @author rb
+ * @author Ralf Biedert
+ * @since 1.0
  */
 public class TrackingDeviceInformation extends CommonDeviceInformation {
     /** */
     private static final long serialVersionUID = -7898108922872157550L;
+    
+    /** The minimal distance required for tracking */
+    public double eyeDistanceMinimal = Double.NaN;
+
+    /** The maximal distance required for tracking */
+    public double eyeDistanceMaximal = Double.NaN;
 }
