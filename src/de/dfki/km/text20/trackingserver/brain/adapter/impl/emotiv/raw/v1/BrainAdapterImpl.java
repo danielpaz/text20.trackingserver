@@ -21,8 +21,11 @@
  */
 package de.dfki.km.text20.trackingserver.brain.adapter.impl.emotiv.raw.v1;
 
+import static net.jcores.jre.CoreKeeper.$;
+
 import java.util.concurrent.BlockingQueue;
 
+import net.jcores.shared.interfaces.functions.F1;
 import net.xeoh.plugins.base.annotations.Capabilities;
 import net.xeoh.plugins.base.annotations.PluginImplementation;
 import net.xeoh.plugins.base.annotations.Timer;
@@ -38,13 +41,15 @@ import de.dfki.km.text20.trackingserver.brain.adapter.impl.emotiv.raw.v1.wrapper
 import de.dfki.km.text20.trackingserver.brain.remote.TrackingDeviceInformation;
 import de.dfki.km.text20.trackingserver.brain.remote.TrackingEvent;
 
+/**
+ * 
+ * @author André Hoffmann
+ */
 @PluginImplementation
 public class BrainAdapterImpl implements BrainAdapter {
 
     public final static int STATE_DISCONNECTED = 1;
-
     public final static int STATE_CONNECTED = 2;
-
     public final static int STATE_RETRIEVING_DATA = 3;
 
     protected BlockingQueue<TrackingEvent> eventQueue;
@@ -59,29 +64,65 @@ public class BrainAdapterImpl implements BrainAdapter {
     protected SWIGTYPE_p_unsigned_int nSamplesTaken;
     protected SWIGTYPE_p_unsigned_int pUser;
     protected SWIGTYPE_p_void hData;
+    
+    protected TrackingDeviceInformation information;
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see de.dfki.km.text20.trackingserver.common.adapter.CommonAdapter#getDeviceInformation()
+     */
     @Override
     public TrackingDeviceInformation getDeviceInformation() {
-        TrackingDeviceInformation device = new TrackingDeviceInformation();
-
-        device.deviceName = "Epoc";
-        device.trackingDeviceManufacturer = "Emotiv";
-
-        return device;
+        this.information = new TrackingDeviceInformation();
+        this.information.trackingDeviceManufacturer = "Emotiv";
+        this.information.deviceName = "EPOC Headset";
+        this.information.hardwareID = "n/a";
+        this.information.hardwareType = "device:emotiv:raw";
+        this.information.channelNames = $(this.channels).map(new F1<EE_DataChannel_t, String>() {
+            @SuppressWarnings("synthetic-access")
+            @Override
+            public String f(EE_DataChannel_t x) {
+                return normChannelName(x.toString());
+            }
+        }).array(String.class);
+        return this.information;
     }
 
+    /**
+     * Normalizes the given channel name
+     * 
+     * @param x
+     * @return
+     */
+    private String normChannelName(String x) {
+        String r = x.replaceAll("ED_ES", "");
+        r = r.replaceAll("ED_", "");
+        r = r.replaceAll("_", ":");
+        r = r.toLowerCase();
+        return "channel:raw:" + r;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see de.dfki.km.text20.trackingserver.common.adapter.CommonAdapter#setup(java.util.concurrent.BlockingQueue)
+     */
     @Override
     public void setup(BlockingQueue<TrackingEvent> eventQueue) {
-
         System.loadLibrary("edk");
         System.loadLibrary("edk_utils");
         System.loadLibrary("edkWrapperV1");
 
         this.channels = new EE_DataChannel_t[] { EE_DataChannel_t.ED_COUNTER, EE_DataChannel_t.ED_AF3, EE_DataChannel_t.ED_F7, EE_DataChannel_t.ED_F3, EE_DataChannel_t.ED_FC5, EE_DataChannel_t.ED_T7, EE_DataChannel_t.ED_P7, EE_DataChannel_t.ED_O1, EE_DataChannel_t.ED_O2, EE_DataChannel_t.ED_P8, EE_DataChannel_t.ED_T8, EE_DataChannel_t.ED_FC6, EE_DataChannel_t.ED_F4, EE_DataChannel_t.ED_F8, EE_DataChannel_t.ED_AF4, EE_DataChannel_t.ED_GYROX, EE_DataChannel_t.ED_GYROY, EE_DataChannel_t.ED_TIMESTAMP, EE_DataChannel_t.ED_FUNC_ID, EE_DataChannel_t.ED_FUNC_VALUE, EE_DataChannel_t.ED_MARKER, EE_DataChannel_t.ED_SYNC_SIGNAL };
-
         this.eventQueue = eventQueue;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see de.dfki.km.text20.trackingserver.common.adapter.CommonAdapter#start()
+     */
     @Override
     public void start() {
         if (this.connected) { return; }
@@ -98,11 +139,14 @@ public class BrainAdapterImpl implements BrainAdapter {
         this.hData = edk.EE_DataCreate();
         edk.EE_DataSetBufferSizeInSec(1.0f);
 
-        if (!this.connected) {
-            stop();
-        }
+        if (!this.connected) stop();
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see de.dfki.km.text20.trackingserver.common.adapter.CommonAdapter#stop()
+     */
     @Override
     public void stop() {
         this.connected = false;
@@ -117,60 +161,64 @@ public class BrainAdapterImpl implements BrainAdapter {
     /**
      * Retrieves the events from the brain tracker
      */
-    @SuppressWarnings("boxing")
     @Timer(period = 50)
     public void pollChannels() {
 
-        if (this.connected) {
+        // If we are not connected, don't do anything
+        if (!this.connected) return;
 
-            if (this.readyToCollect) {
+        // Check if we are ready to query data
+        if (this.readyToCollect) {
+            edk.EE_DataUpdateHandle(this.user, this.hData);
+            edk.EE_DataGetNumberOfSample(this.hData, this.nSamplesTaken);
 
-                edk.EE_DataUpdateHandle(this.user, this.hData);
-                edk.EE_DataGetNumberOfSample(this.hData, this.nSamplesTaken);
+            // ?
+            long sampleCount = edk.pUIntToUInt(this.nSamplesTaken);
 
-                long sampleCount = edk.pUIntToUInt(this.nSamplesTaken);
+            // When we have samples ...
+            if (sampleCount > 0) {
+                SWIGTYPE_p_double buffer = edk.createDataBuffer(this.nSamplesTaken);
 
-                if (sampleCount > 0) {
-                    SWIGTYPE_p_double buffer = edk.createDataBuffer(this.nSamplesTaken);
+                // Get all samples from the device (TODO: Set proper time, as we will get a number of events 
+                // with the same time in the TrackingEvent)
+                for (int sample = 0; sample < sampleCount; sample++) {
+                    TrackingEvent t = new TrackingEvent();
 
-                    for (int sample = 0; sample < sampleCount; sample++) {
+                    // Go through all channels
+                    for (int i = 0; i < this.channels.length; i++) {
+                        // Get the data
+                        EE_DataChannel_t channel = this.channels[i];
+                        edk.EE_DataGet(this.hData, channel, buffer, sampleCount);
 
-                        TrackingEvent t = new TrackingEvent();
-                        // TODO: t.date = 
+                        /*
+                        final String channelName = normChannelName(channel.toString());
+                        final int index = $(this.information.channelNames).index(channelName).get(0).intValue();
+                        */
 
-                        for (int i = 0; i < this.channels.length; i++) {
-                            EE_DataChannel_t channel = this.channels[i];
-                            edk.EE_DataGet(this.hData, channel, buffer, sampleCount);
-
-                            String channelName = "channel:" + channel.toString().replace("ED_", "").toLowerCase();
-                            t.channels.put(channelName, edk.readFromDataBuffer(buffer, sample));
-                        }
-
-                        // enqueue event
-                        try {
-                            this.eventQueue.put(t);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-
+                        // and set the value
+                        t.deviceReadings[i] = edk.readFromDataBuffer(buffer, sample);
                     }
-                    edk.freeDataBuffer(buffer);
+
+                    // Put the event into the queue.
+                    try {
+                        this.eventQueue.put(t);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
-            } else {
-                // not yet ready to collect data
-                edk.EE_EngineGetNextEvent(this.eEvent);
+                edk.freeDataBuffer(buffer);
+            }
+        } else {
+            // not yet ready to collect data
+            edk.EE_EngineGetNextEvent(this.eEvent);
+            
+            EE_Event_t eventType = edk.EE_EmoEngineEventGetType(this.eEvent);
+            edk.EE_EmoEngineEventGetUserId(this.eEvent, this.pUser);
 
-                EE_Event_t eventType = edk.EE_EmoEngineEventGetType(this.eEvent);
-
-                edk.EE_EmoEngineEventGetUserId(this.eEvent, this.pUser);
-
-                if (eventType == EE_Event_t.EE_UserAdded) {
-
-                    this.user = edk.pUIntToUInt(this.pUser);
-                    edk.EE_DataAcquisitionEnable(this.user, true);
-
-                    this.readyToCollect = true;
-                }
+            if (eventType == EE_Event_t.EE_UserAdded) {
+                this.user = edk.pUIntToUInt(this.pUser);
+                edk.EE_DataAcquisitionEnable(this.user, true);
+                this.readyToCollect = true;
             }
         }
     }

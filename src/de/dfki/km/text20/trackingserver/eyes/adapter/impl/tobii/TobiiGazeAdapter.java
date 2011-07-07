@@ -230,6 +230,8 @@ public class TobiiGazeAdapter implements GazeAdapter {
             this.trackingDeviceInfo.trackingDeviceManufacturer = "Tobii";
             this.trackingDeviceInfo.deviceName = configuration.getString(TobiiGazeAdapter.class, "device.name", "unknown");
             this.trackingDeviceInfo.hardwareID = configuration.getString(TobiiGazeAdapter.class, "device.id", "unknown");
+            this.trackingDeviceInfo.eyeDistanceMaximal = configuration.getDouble(TobiiGazeAdapter.class, "device.distance.max", Double.NaN);
+            this.trackingDeviceInfo.eyeDistanceMinimal = configuration.getDouble(TobiiGazeAdapter.class, "device.distance.min", Double.NaN);
             
             // And connect our filter
             this.diagnosis.channel(CommonAdapterTracer.class).status("start/connect");            

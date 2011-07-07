@@ -5,13 +5,9 @@
 	<classpathentry kind="lib" path="dependencies/dfkiutils5.jar"/>
 	<classpathentry kind="lib" path="dependencies/ucar_prefs-0.9.3.jar"/>
 	<classpathentry kind="lib" path="dependencies/com4j.jar"/>
-	<classpathentry kind="lib" path="dependencies/jspf.remote-0.9.0.jar"/>
-	<classpathentry kind="lib" path="dependencies/jspf.remote.discovery-0.9.0.jar"/>
 	<classpathentry kind="lib" path="dependencies/jna.jar"/>
-	<classpathentry kind="lib" path="dependencies/jspf.remote.json-0.9.0.jar"/>
-	<classpathentry kind="lib" path="dependencies/jspf.remote.lipermi-0.9.0.jar"/>
 	<classpathentry kind="lib" path="dependencies/EyeTracker2Java.jar"/>
-	<classpathentry kind="lib" path="dependencies/jspf.core-0.9.0.jar"/>
 	<classpathentry kind="lib" path="dependencies/jspf.updatecheck.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/JSPF - Java Simple Plugin Framework"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
