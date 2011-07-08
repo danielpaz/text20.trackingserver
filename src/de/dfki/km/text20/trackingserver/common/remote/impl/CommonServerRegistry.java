@@ -63,7 +63,7 @@ import de.dfki.km.text20.trackingserver.common.remote.diagnosis.channels.tracing
  * @param <I> 
  * @param <A> 
  */
-public class CommonServerRegistry<T extends CommonTrackingEvent, C extends CommonClientCallback<T>, I extends CommonDeviceInformation, A extends CommonAdapter<T, I>>
+public abstract class CommonServerRegistry<T extends CommonTrackingEvent, C extends CommonClientCallback<T>, I extends CommonDeviceInformation, A extends CommonAdapter<T, I>>
         implements CommonTrackingServerRegistry<T, C, I> {
 
     /** */
@@ -122,6 +122,15 @@ public class CommonServerRegistry<T extends CommonTrackingEvent, C extends Commo
         }
     }
 
+    
+    /**
+     * Feeds a callback based on the current queue 
+     * 
+     * @param queue
+     * @param callback
+     */
+    protected abstract void feedCallback(BlockingQueue<T> queue, CommonClientCallback<CommonTrackingEvent> callback) throws Exception; 
+    
     /*
      * (non-Javadoc)
      * 
@@ -137,13 +146,13 @@ public class CommonServerRegistry<T extends CommonTrackingEvent, C extends Commo
 
         executorService.execute(new Runnable() {
 
+            @SuppressWarnings("unchecked")
             @Override
             public void run() {
                 // Pump data
                 while (true) {
                     try {
-                        final T event = queue.take();
-                        callback.newTrackingEvent(event);
+                        feedCallback(queue, (CommonClientCallback<CommonTrackingEvent>) callback);
                     } catch (Exception e) {
                         e.printStackTrace();
                         

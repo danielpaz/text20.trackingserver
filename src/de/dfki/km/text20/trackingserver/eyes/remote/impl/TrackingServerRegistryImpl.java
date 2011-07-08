@@ -31,6 +31,8 @@ import net.xeoh.plugins.base.annotations.PluginImplementation;
 import net.xeoh.plugins.base.annotations.Thread;
 import net.xeoh.plugins.base.util.OptionUtils;
 import net.xeoh.plugins.diagnosis.local.options.status.OptionInfo;
+import de.dfki.km.text20.trackingserver.common.remote.CommonClientCallback;
+import de.dfki.km.text20.trackingserver.common.remote.CommonTrackingEvent;
 import de.dfki.km.text20.trackingserver.common.remote.diagnosis.channels.tracing.CommonRegistryTracer;
 import de.dfki.km.text20.trackingserver.common.remote.impl.CommonServerRegistry;
 import de.dfki.km.text20.trackingserver.eyes.adapter.AdapterCommand;
@@ -212,6 +214,25 @@ public class TrackingServerRegistryImpl
         }
     }
 
+    
+    /* (non-Javadoc)
+     * @see de.dfki.km.text20.trackingserver.common.remote.impl.CommonServerRegistry#feedCallback(java.util.concurrent.BlockingQueue, de.dfki.km.text20.trackingserver.common.remote.CommonClientCallback)
+     */
+    @SuppressWarnings("cast")
+    @Override
+    protected void feedCallback(BlockingQueue<TrackingEvent> queue,
+                                CommonClientCallback<CommonTrackingEvent> callback) throws Exception {
+        // Okay, there are things that are more beautiful than this one (caused by LipeRMI array casting
+        // problems)
+
+        try {
+            final TrackingEvent event = queue.take();
+            callback.newTrackingEvents((CommonTrackingEvent[]) new TrackingEvent[] { event });        
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
     /**
      * @return .
      */
