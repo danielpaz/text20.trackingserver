@@ -58,8 +58,6 @@ public class SimulatingBrainAdapter implements BrainAdapter {
     /** Retrieves the events from the brain tracker */
     @Timer(period = 8)
     public void pollChannels() {
-        TrackingEvent trackingEvent = new TrackingEvent();
-        
         final TrackingEvent t = new TrackingEvent();
         t.deviceReadings = new double[5];
         t.deviceReadings[0] = Math.random() * 2 - 1;
@@ -71,7 +69,7 @@ public class SimulatingBrainAdapter implements BrainAdapter {
         try {
             if (this.eventQueue == null) return;
             
-            this.eventQueue.put(trackingEvent);
+            this.eventQueue.put(t);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

@@ -5,7 +5,7 @@
 
 	<!-- Define different global variables -->
 	<property name="prefix" value="trackingserver" />
-	<property name="version" value="1.0.0" />
+	<property name="version" value="1.1.0" />
 
 	<!-- Define different roots -->
 	<property name="build.root" value="ant.build/" />

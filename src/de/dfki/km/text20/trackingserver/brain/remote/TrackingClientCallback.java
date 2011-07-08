@@ -26,8 +26,15 @@ import de.dfki.km.text20.trackingserver.common.remote.CommonClientCallback;
 
 /**
  * 
- * @author rb
+ * @author Ralf Biedert
  */
 public interface TrackingClientCallback extends CommonClientCallback<TrackingEvent> {
-    //
+
+    /**
+     * Called when a new tracking event arrives
+     * 
+     * @param events
+     */
+    @Override
+    public void newTrackingEvents(TrackingEvent ... events);
 }

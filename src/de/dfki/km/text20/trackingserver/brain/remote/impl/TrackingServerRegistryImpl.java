@@ -22,6 +22,8 @@
 
 package de.dfki.km.text20.trackingserver.brain.remote.impl;
 
+import java.util.concurrent.BlockingQueue;
+
 import net.xeoh.plugins.base.annotations.Capabilities;
 import net.xeoh.plugins.base.annotations.PluginImplementation;
 import de.dfki.km.text20.trackingserver.brain.adapter.BrainAdapter;
@@ -29,6 +31,8 @@ import de.dfki.km.text20.trackingserver.brain.remote.TrackingClientCallback;
 import de.dfki.km.text20.trackingserver.brain.remote.TrackingDeviceInformation;
 import de.dfki.km.text20.trackingserver.brain.remote.TrackingEvent;
 import de.dfki.km.text20.trackingserver.brain.remote.TrackingServerRegistry;
+import de.dfki.km.text20.trackingserver.common.remote.CommonClientCallback;
+import de.dfki.km.text20.trackingserver.common.remote.CommonTrackingEvent;
 import de.dfki.km.text20.trackingserver.common.remote.impl.CommonServerRegistry;
 
 /**
@@ -46,4 +50,21 @@ public class TrackingServerRegistryImpl
         return new String[] { "trackingregistry:brain" };
     }
 
+    /* (non-Javadoc)
+     * @see de.dfki.km.text20.trackingserver.common.remote.impl.CommonServerRegistry#feedCallback(java.util.concurrent.BlockingQueue, de.dfki.km.text20.trackingserver.common.remote.CommonClientCallback)
+     */
+    @SuppressWarnings("cast")
+    @Override
+    protected void feedCallback(BlockingQueue<TrackingEvent> queue,
+                                CommonClientCallback<CommonTrackingEvent> callback) throws Exception {
+        // Okay, there are things that are more beautiful than this one (caused by LipeRMI array casting
+        // problems)
+        try {
+            final TrackingEvent event = queue.take();
+            callback.newTrackingEvents((CommonTrackingEvent[]) new TrackingEvent[] { event });        
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

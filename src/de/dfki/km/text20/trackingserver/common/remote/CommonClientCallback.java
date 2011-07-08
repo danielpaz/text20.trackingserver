@@ -32,7 +32,7 @@ public interface CommonClientCallback<T extends CommonTrackingEvent>  {
     /**
      * Called when a new tracking event arrives
      * 
-     * @param event
+     * @param events The events that were recorded in the meantime.
      */
-    public void newTrackingEvent(T event);
+    public void newTrackingEvents(T ... events);
 }
