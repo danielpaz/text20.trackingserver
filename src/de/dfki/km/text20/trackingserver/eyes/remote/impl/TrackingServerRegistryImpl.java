@@ -21,6 +21,8 @@
  */
 package de.dfki.km.text20.trackingserver.eyes.remote.impl;
 
+import static net.jcores.jre.CoreKeeper.$;
+
 import java.awt.Point;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
@@ -49,8 +51,10 @@ import de.dfki.km.text20.trackingserver.eyes.remote.options.SendCommandOption;
 import de.dfki.km.text20.trackingserver.eyes.remote.options.sendcommand.OptionRecalibrationPattern;
 
 /**
+ * The main class for the tracking server registry.
  * 
- * @author rb
+ * @author Ralf Biedert
+ * @since 1.0
  */
 @PluginImplementation
 public class TrackingServerRegistryImpl
@@ -144,24 +148,25 @@ public class TrackingServerRegistryImpl
     }
 
     /**
-     * @param latestEvent
-     * @return
+     * Filters the tracking event according to the current filter we have.
+     * 
+     * @param latestEvent The event to filter.
+     * 
+     * @return The filtered event.
      */
-    private TrackingEvent filterEvent(TrackingEvent latestEvent) {
+    private TrackingEvent filterEvent(TrackingEvent _latestEvent) {
         // Sanity check
-        if (latestEvent == null) return null;
+        if (_latestEvent == null) return null;
+        
+        final TrackingEvent latestEvent = $.clone(_latestEvent);
 
-        // zomfg, this needs improvement, we also have to adjust all the other
-        // values.
+        // zomfg, this needs improvement, we also have to adjust all the other values.
         if (this.displacementFilter != null && latestEvent.centerGaze != null) {
             latestEvent.centerGaze = this.displacementFilter.filterEvent(latestEvent.centerGaze);
             latestEvent.leftGaze = this.displacementFilter.filterEvent(latestEvent.leftGaze);
             latestEvent.rightGaze = this.displacementFilter.filterEvent(latestEvent.rightGaze);
-            latestEvent._centerX = latestEvent.centerGaze.x;
-            latestEvent._centerY = latestEvent.centerGaze.y;
         }
 
-        // TODO: Make a copy, don't return the same object.
         return latestEvent;
     }
 
@@ -224,7 +229,6 @@ public class TrackingServerRegistryImpl
                                 CommonClientCallback<CommonTrackingEvent> callback) throws Exception {
         // Okay, there are things that are more beautiful than this one (caused by LipeRMI array casting
         // problems)
-
         try {
             final TrackingEvent event = queue.take();
             callback.newTrackingEvents((CommonTrackingEvent[]) new TrackingEvent[] { event });        
@@ -240,5 +244,4 @@ public class TrackingServerRegistryImpl
     public String[] getCapabilities() {
         return new String[] { "trackingregistry:eyes" };
     }
-
 }

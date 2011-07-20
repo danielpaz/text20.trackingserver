@@ -13,6 +13,7 @@ import net.xeoh.plugins.base.annotations.meta.Version;
 import net.xeoh.plugins.diagnosis.local.Diagnosis;
 import net.xeoh.plugins.diagnosis.local.DiagnosisChannel;
 import de.dfki.km.text20.trackingserver.common.adapter.diagnosis.channels.tracing.CommonAdapterTracer;
+import de.dfki.km.text20.trackingserver.common.measurement.util.TimingUtil;
 import de.dfki.km.text20.trackingserver.eyes.adapter.AdapterCommand;
 import de.dfki.km.text20.trackingserver.eyes.adapter.GazeAdapter;
 import de.dfki.km.text20.trackingserver.eyes.adapter.options.AdapterCommandOption;
@@ -32,6 +33,10 @@ public class DummyGazeAdapter implements GazeAdapter {
     /** */
     @InjectPlugin
     public Diagnosis diagnosis;
+    
+    /** */
+    @InjectPlugin
+    public TimingUtil timing;
     
     /** */
     @InjectPlugin
@@ -85,8 +90,11 @@ public class DummyGazeAdapter implements GazeAdapter {
                     final double percentageTime = (time / 2000.0) * Math.PI;
 
                     final double value = Math.sin(percentageTime) * 0.8;
-                    trackingEvent._centerValidity = true;
-
+                    
+                    // Initialize the event
+                    DummyGazeAdapter.this.timing.initEvent(trackingEvent);
+                    
+                    
                     trackingEvent.centerGaze = new Point(1000, 1000);
                     trackingEvent.leftGaze = new Point(1000, 1000);
                     trackingEvent.rightGaze = new Point(1000, 1000);
@@ -102,7 +110,6 @@ public class DummyGazeAdapter implements GazeAdapter {
                     trackingEvent.pupilSizeLeft = 1.5f + trackingEvent.rightEyePos[0];
                     trackingEvent.pupilSizeRight = 2.0f;
 
-                    trackingEvent.date = System.currentTimeMillis();
 
                     DummyGazeAdapter.this.queue.add(trackingEvent);
                     try {

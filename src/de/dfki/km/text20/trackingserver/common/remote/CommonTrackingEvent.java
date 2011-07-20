@@ -24,13 +24,18 @@ package de.dfki.km.text20.trackingserver.common.remote;
 import java.io.Serializable;
 
 /**
- * @author rb
+ * A common tracking event for all tracking devices
+ * 
+ * @author Ralf Biedert
+ * @since 1.0
  */
-public class CommonTrackingEvent implements Serializable {
+public class CommonTrackingEvent implements Serializable, Cloneable {
     /**  */
     private static final long serialVersionUID = -7905990708070667751L;
     
-    /** date this event was created */
-    public long date = System.currentTimeMillis();
+    /** Time this event was observer (in ms) */
+    public long observationTime = System.currentTimeMillis();
     
+    /** Relative time this event was observed (in ns) */
+    public long elapsedTime = 0;
 }

@@ -36,7 +36,7 @@ import de.dfki.km.text20.trackingserver.common.remote.CommonTrackingEvent;
 import de.dfki.km.text20.trackingserver.common.remote.impl.CommonServerRegistry;
 
 /**
- * @author rb
+ * @author Ralf Biedert
  */
 @PluginImplementation
 public class TrackingServerRegistryImpl

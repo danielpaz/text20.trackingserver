@@ -26,8 +26,10 @@ import java.awt.Point;
 import de.dfki.km.text20.trackingserver.common.remote.CommonTrackingEvent;
 
 /**
+ * An actual tracking event that is transmitted over the network.
  * 
- * @author rb
+ * @author Ralf Biedert
+ * @since 1.0
  */
 public class TrackingEvent extends CommonTrackingEvent {
     private static final long serialVersionUID = 3557480099000038721L;
@@ -61,15 +63,4 @@ public class TrackingEvent extends CommonTrackingEvent {
 
     /** Distances in mm  (or set to null if invalid) */
     public float[] eyeDistances = new float[2];
-
-    // Old values go here (and will be removed soon)
-    /** Estimated x-gaze position */
-    public int _centerX;
-
-    /** Estimated y-gaze position */
-    public int _centerY;
-
-    /** True if the centerX and centerY coordinates are both valid. */
-    public boolean _centerValidity;
-
 }
