@@ -135,11 +135,7 @@ public class ReplayGazeAdapter implements GazeAdapter {
                     trackingEvent.leftGaze = toSend;
                     trackingEvent.rightGaze = toSend;
 
-                    trackingEvent._centerX = toSend.x;
-                    trackingEvent._centerY = toSend.y;
-                    trackingEvent._centerValidity = true;
-
-                    trackingEvent.date = System.currentTimeMillis();
+                    trackingEvent.observationTime = System.currentTimeMillis();
 
                     // Dispatch the event
                     ReplayGazeAdapter.this.queue.add(trackingEvent);

@@ -31,6 +31,7 @@ import de.dfki.eyetracker.session.TrackingSession;
 import de.dfki.eyetracker.session.TrackingSessionManager;
 import de.dfki.eyetracker.util.PreferencesUtil;
 import de.dfki.km.text20.trackingserver.common.adapter.diagnosis.channels.tracing.CommonAdapterTracer;
+import de.dfki.km.text20.trackingserver.common.measurement.util.TimingUtil;
 import de.dfki.km.text20.trackingserver.eyes.adapter.AdapterCommand;
 import de.dfki.km.text20.trackingserver.eyes.adapter.GazeAdapter;
 import de.dfki.km.text20.trackingserver.eyes.adapter.impl.tobii.diagnosis.channels.status.TobiiSDKNotFoundStatus;
@@ -56,6 +57,10 @@ public class TobiiGazeAdapter implements GazeAdapter {
     /** Enables us to report errors */
     @InjectPlugin
     public Diagnosis diagnosis;
+    
+    /** Needed to set up the timing properly */
+    @InjectPlugin
+    public TimingUtil timing;
 
     /** Needed to obtain Tobii specific configuration */
     @InjectPlugin
@@ -73,7 +78,7 @@ public class TobiiGazeAdapter implements GazeAdapter {
     
     /** Tobii calibrator (new) */
     TobiiCalibratorV5 calibratorV5;
-
+    
     /** */
     final Lock callbacksLock = new ReentrantLock();
 

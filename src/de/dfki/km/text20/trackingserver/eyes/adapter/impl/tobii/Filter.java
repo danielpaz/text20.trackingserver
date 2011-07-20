@@ -12,18 +12,18 @@ import de.dfki.util.event.Event;
 /**
  * Listens for events and puts them into a queue.
  * 
- * @author rb
+ * @author ?
  */
 class Filter extends AbstractEventFilter {
 
     /** */
-    private final TobiiGazeAdapter m_tobiiGazeAdapter;
+    private final TobiiGazeAdapter gazeAdapter;
 
     /**
      * @param tobiiGazeAdapter
      */
     Filter(final TobiiGazeAdapter tobiiGazeAdapter) {
-        this.m_tobiiGazeAdapter = tobiiGazeAdapter;
+        this.gazeAdapter = tobiiGazeAdapter;
     }
 
     @Override
@@ -65,15 +65,10 @@ class Filter extends AbstractEventFilter {
 
             // Setup a serializable tracking event 
             final TrackingEvent trackingEvent = new TrackingEvent();
+            this.gazeAdapter.timing.initEvent(trackingEvent);
             
             // TODO: Set event validity properly!
-
-            trackingEvent.date = System.currentTimeMillis();
-
-            // Deprecated. TODO: Remove me. 
-            trackingEvent._centerX = x;
-            trackingEvent._centerY = y;
-            trackingEvent._centerValidity = valitity;
+            // TODO: Get proper timings from the device!
 
             if (valitity) {
                 trackingEvent.centerGaze = new Point();
@@ -81,9 +76,9 @@ class Filter extends AbstractEventFilter {
                 trackingEvent.centerGaze.y = y;
             }
 
-            final float range = this.m_tobiiGazeAdapter.maxDistance - this.m_tobiiGazeAdapter.minDistance;
-            final float ddl = (dl - this.m_tobiiGazeAdapter.minDistance) / range;
-            final float ddr = (dr - this.m_tobiiGazeAdapter.minDistance) / range;
+            final float range = this.gazeAdapter.maxDistance - this.gazeAdapter.minDistance;
+            final float ddl = (dl - this.gazeAdapter.minDistance) / range;
+            final float ddr = (dr - this.gazeAdapter.minDistance) / range;
 
             trackingEvent.leftEyePos[0] = 1.0f - xl;
             trackingEvent.leftEyePos[1] = yl;
@@ -122,7 +117,7 @@ class Filter extends AbstractEventFilter {
             trackingEvent.gazeRightPos[1] = y3;
 
             // And put it into the queue.		
-            this.m_tobiiGazeAdapter.dequeue.add(trackingEvent);
+            this.gazeAdapter.dequeue.add(trackingEvent);
 
         } catch (final Throwable t) {
             t.printStackTrace();

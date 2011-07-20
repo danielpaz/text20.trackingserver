@@ -19,6 +19,7 @@ import net.xeoh.plugins.diagnosis.local.Diagnosis;
 import net.xeoh.plugins.diagnosis.local.DiagnosisChannel;
 import net.xeoh.plugins.diagnosis.local.options.status.OptionInfo;
 import de.dfki.km.text20.trackingserver.common.adapter.diagnosis.channels.tracing.CommonAdapterTracer;
+import de.dfki.km.text20.trackingserver.common.measurement.util.TimingUtil;
 import de.dfki.km.text20.trackingserver.eyes.adapter.AdapterCommand;
 import de.dfki.km.text20.trackingserver.eyes.adapter.GazeAdapter;
 import de.dfki.km.text20.trackingserver.eyes.adapter.options.AdapterCommandOption;
@@ -43,7 +44,11 @@ public class SimulatingGazeAdapter implements GazeAdapter {
     /** */
     @InjectPlugin
     public PluginConfiguration rawConfiguration;
-
+    
+    /** */
+    @InjectPlugin
+    public TimingUtil timing;
+    
     /** */
     private TrackingDeviceInformation trackingDeviceInfo;
     /** */
@@ -104,6 +109,8 @@ public class SimulatingGazeAdapter implements GazeAdapter {
 
                     // Generate tracking event
                     final TrackingEvent trackingEvent = new TrackingEvent();
+                    timing.initEvent(trackingEvent);
+                    
                     trackingEvent.leftEyePos[0] = 0.40f;
                     trackingEvent.leftEyePos[1] = 0.5f;
                     trackingEvent.leftEyePos[2] = 0.5f;
@@ -124,12 +131,6 @@ public class SimulatingGazeAdapter implements GazeAdapter {
                     trackingEvent.centerGaze = toSend;
                     trackingEvent.leftGaze = toSend;
                     trackingEvent.rightGaze = toSend;
-
-                    trackingEvent._centerX = toSend.x;
-                    trackingEvent._centerY = toSend.y;
-                    trackingEvent._centerValidity = true;
-
-                    trackingEvent.date = System.currentTimeMillis();
 
                     // Dispatch the event
                     SimulatingGazeAdapter.this.queue.add(trackingEvent);
