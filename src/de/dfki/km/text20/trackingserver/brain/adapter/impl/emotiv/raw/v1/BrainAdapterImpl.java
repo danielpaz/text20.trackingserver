@@ -25,7 +25,7 @@ import static net.jcores.jre.CoreKeeper.$;
 
 import java.util.concurrent.BlockingQueue;
 
-import net.jcores.shared.interfaces.functions.F1;
+import net.jcores.jre.interfaces.functions.F1;
 import net.xeoh.plugins.base.annotations.Capabilities;
 import net.xeoh.plugins.base.annotations.PluginImplementation;
 import net.xeoh.plugins.base.annotations.Timer;
@@ -81,7 +81,6 @@ public class BrainAdapterImpl implements BrainAdapter {
         this.information.hardwareType = "device:emotiv:raw";
         this.information.channelNames = $(this.channels).map(new F1<EE_DataChannel_t, String>() {
             @SuppressWarnings("synthetic-access")
-            @Override
             public String f(EE_DataChannel_t x) {
                 return normChannelName(x.toString());
             }

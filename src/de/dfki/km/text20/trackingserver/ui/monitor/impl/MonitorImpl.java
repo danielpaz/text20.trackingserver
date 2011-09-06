@@ -53,7 +53,7 @@ import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
-import net.jcores.shared.interfaces.functions.F0;
+import net.jcores.jre.interfaces.functions.F0;
 import net.xeoh.plugins.base.annotations.PluginImplementation;
 import net.xeoh.plugins.base.annotations.events.Init;
 import net.xeoh.plugins.base.annotations.injections.InjectPlugin;
@@ -175,7 +175,7 @@ public class MonitorImpl implements Monitor {
                             }
                         });                        
                     }
-                }, 3000);
+                }, 3000l);
 
                 
                 // Also, notify the user

@@ -8,6 +8,9 @@
 	<classpathentry kind="lib" path="dependencies/jna.jar"/>
 	<classpathentry kind="lib" path="dependencies/EyeTracker2Java.jar"/>
 	<classpathentry kind="lib" path="dependencies/jspf.updatecheck.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/JSPF - Java Simple Plugin Framework"/>
+	<classpathentry kind="lib" path="dependencies/jspf.core-1.0.3.jar"/>
+	<classpathentry kind="lib" path="dependencies/jspf.remote-1.0.3.jar"/>
+	<classpathentry kind="lib" path="dependencies/jspf.remote.discovery-1.0.3.jar"/>
+	<classpathentry kind="lib" path="dependencies/jspf.remote.lipermi-1.0.3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
