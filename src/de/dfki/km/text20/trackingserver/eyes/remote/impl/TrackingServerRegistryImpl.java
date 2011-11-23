@@ -88,7 +88,7 @@ public class TrackingServerRegistryImpl
                     numConsecutiveMisdetected++;
 
                     // It appears that sometimes (once every few minutes) we don't receive any
-                    // event from the Tobii adapter. In that case, don't warn instantly, but rather 
+                    // event from the Tobii adapter. In that case, don't warn instantly, but rather
                     // give the interface a few tries
                     if (numConsecutiveMisdetected >= 3) {
                         this.diagnosis.channel(ReceivingEvents.class).status(Boolean.FALSE);
@@ -157,7 +157,7 @@ public class TrackingServerRegistryImpl
     private TrackingEvent filterEvent(TrackingEvent _latestEvent) {
         // Sanity check
         if (_latestEvent == null) return null;
-        
+
         final TrackingEvent latestEvent = $.clone(_latestEvent);
 
         // zomfg, this needs improvement, we also have to adjust all the other values.
@@ -219,24 +219,23 @@ public class TrackingServerRegistryImpl
         }
     }
 
-    
-    /* (non-Javadoc)
-     * @see de.dfki.km.text20.trackingserver.common.remote.impl.CommonServerRegistry#feedCallback(java.util.concurrent.BlockingQueue, de.dfki.km.text20.trackingserver.common.remote.CommonClientCallback)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see de.dfki.km.text20.trackingserver.common.remote.impl.CommonServerRegistry#feedCallback(java.util.concurrent.
+     * BlockingQueue, de.dfki.km.text20.trackingserver.common.remote.CommonClientCallback)
      */
     @SuppressWarnings("cast")
     @Override
     protected void feedCallback(BlockingQueue<TrackingEvent> queue,
-                                CommonClientCallback<CommonTrackingEvent> callback) throws Exception {
+                                CommonClientCallback<CommonTrackingEvent> callback)
+                                                                                   throws Exception {
         // Okay, there are things that are more beautiful than this one (caused by LipeRMI array casting
         // problems)
-        try {
-            final TrackingEvent event = queue.take();
-            callback.newTrackingEvents((CommonTrackingEvent[]) new TrackingEvent[] { event });        
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        final TrackingEvent event = queue.take();
+        callback.newTrackingEvents((CommonTrackingEvent[]) new TrackingEvent[] { event });
     }
-    
+
     /**
      * @return .
      */

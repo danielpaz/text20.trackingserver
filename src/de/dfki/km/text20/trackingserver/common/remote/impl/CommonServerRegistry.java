@@ -161,7 +161,7 @@ public abstract class CommonServerRegistry<T extends CommonTrackingEvent, C exte
                             // And remove the queue from the callbacks list
                             CommonServerRegistry.this.callbacksLock.lock();
                             try {
-                                CommonServerRegistry.this.callbacks.add(queue);
+                                CommonServerRegistry.this.callbacks.remove(queue);
                             } finally {
                                 CommonServerRegistry.this.callbacksLock.unlock();
                             }   
