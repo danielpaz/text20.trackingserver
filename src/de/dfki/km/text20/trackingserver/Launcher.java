@@ -38,6 +38,7 @@ import javax.swing.UIManager;
 import net.xeoh.plugins.base.PluginManager;
 import net.xeoh.plugins.base.impl.PluginManagerFactory;
 import net.xeoh.plugins.base.util.JSPFProperties;
+import net.xeoh.plugins.diagnosis.local.Diagnosis;
 import net.xeoh.plugins.meta.updatecheck.UpdateCheck;
 
 /**
@@ -51,13 +52,13 @@ public class Launcher {
      * @throws MalformedURLException
      * @throws UnknownHostException
      * @throws URISyntaxException
-     * @throws FileNotFoundException 
+     * @throws FileNotFoundException
      */
     public static void main(String[] args) throws MalformedURLException,
                                           UnknownHostException, URISyntaxException,
                                           FileNotFoundException {
 
-        // Set global look and feel. 
+        // Set global look and feel.
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception ex) {
@@ -83,9 +84,15 @@ public class Launcher {
 
         props.setProperty(PluginManager.class, "cache.enabled", "true");
         props.setProperty(PluginManager.class, "cache.mode", "weak");
+        // props.setProperty(PluginManager.class, "logging.level", "ALL");        
         props.setProperty(UpdateCheck.class, "update.url", "http://api.text20.net/common/versioncheck/");
         props.setProperty(UpdateCheck.class, "product.name", "text20.trackingserver");
         props.setProperty(UpdateCheck.class, "product.version", "1.4.2");
+        props.setProperty(Diagnosis.class, "recording.enabled", "true");
+        props.setProperty(Diagnosis.class, "recording.file", "diagnosis.record");
+        props.setProperty(Diagnosis.class, "recording.format", "java/serialization");
+        props.setProperty(Diagnosis.class, "analysis.stacktraces.enabled", "true");
+        props.setProperty(Diagnosis.class, "analysis.stacktraces.depth", "10000");
 
         final PluginManager pluginManager = PluginManagerFactory.createPluginManager(props);
 

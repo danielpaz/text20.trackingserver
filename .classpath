@@ -12,5 +12,6 @@
 	<classpathentry kind="lib" path="dependencies/jspf.remote-1.0.3.jar"/>
 	<classpathentry kind="lib" path="dependencies/jspf.remote.discovery-1.0.3.jar"/>
 	<classpathentry kind="lib" path="dependencies/jspf.remote.lipermi-1.0.3.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/Text 2.0 NEW ARCHITECTURE"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
