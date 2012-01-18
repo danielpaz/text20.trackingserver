@@ -13,3 +13,7 @@ syntax: regexp
 ^diagnosis\.record$
 syntax: regexp
 ^text20\.framework-1\.3\.0\.zip$
+syntax: regexp
+^diagnosis\.record\.txt$
+syntax: regexp
+^libSDK3\.dylib$

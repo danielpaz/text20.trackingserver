@@ -22,6 +22,8 @@
 
 package de.dfki.km.text20.trackingserver.common.remote.impl;
 
+import static net.jcores.jre.CoreKeeper.$;
+
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -188,7 +190,6 @@ public abstract class CommonServerRegistry<T extends CommonTrackingEvent, C exte
      */
     @PluginLoaded
     public void pluginAdded(A adapter) {
-
         // Only add this once.
         if (this.usedBrainAdpater != null) return;
 
