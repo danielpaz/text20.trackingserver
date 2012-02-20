@@ -2,6 +2,14 @@ package de.dfki.km.text20.trackingserver.eyes.adapter.impl.tobiiAPI3;
 
 import static net.jcores.jre.CoreKeeper.$;
 
+import io.gaze.devices.tobii.Browser;
+import io.gaze.devices.tobii.BrowserListener;
+import io.gaze.devices.tobii.Device;
+import io.gaze.devices.tobii.DeviceInfo;
+import io.gaze.devices.tobii.GazeEvent;
+import io.gaze.devices.tobii.GazeListener;
+import io.gaze.devices.tobii.SDK;
+
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Toolkit;
@@ -12,13 +20,6 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import net.jcores.jre.interfaces.functions.F0R;
 import net.jcores.jre.interfaces.functions.F1;
-import net.text20.devices.tobii.Browser;
-import net.text20.devices.tobii.BrowserListener;
-import net.text20.devices.tobii.Device;
-import net.text20.devices.tobii.DeviceInfo;
-import net.text20.devices.tobii.GazeEvent;
-import net.text20.devices.tobii.GazeListener;
-import net.text20.devices.tobii.SDK;
 import net.xeoh.plugins.base.PluginConfiguration;
 import net.xeoh.plugins.base.annotations.Capabilities;
 import net.xeoh.plugins.base.annotations.PluginImplementation;
@@ -192,7 +193,7 @@ public class TobiiGazeAdapterV3 implements GazeAdapter, GazeListener {
     /*
      * (non-Javadoc)
      * 
-     * @see net.text20.devices.tobii.GazeListener#onGaze(net.text20.devices.tobii.GazeEvent)
+     * @see io.gaze.devices.tobii.GazeListener#onGaze(io.gaze.devices.tobii.GazeEvent)
      */
     @Override
     public void onGaze(GazeEvent event) {
