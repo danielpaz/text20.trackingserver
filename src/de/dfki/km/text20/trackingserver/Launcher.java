@@ -23,6 +23,8 @@ package de.dfki.km.text20.trackingserver;
 
 import static net.jcores.jre.CoreKeeper.$;
 
+import io.gaze.devices.tobii.deploy.Deploy;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -58,6 +60,8 @@ public class Launcher {
                                           UnknownHostException, URISyntaxException,
                                           FileNotFoundException {
 
+        Deploy.deploy();
+        
         // Set global look and feel.
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
